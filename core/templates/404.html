@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}404 — Không Tìm Thấy Nội Dung | SportChain{% endblock %}
+{% block meta_description %}Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển sang đường dẫn khác trên hệ thống SportChain.{% endblock %}
+
+{% block content %}
+<div class="container section text-center" style="padding:100px 20px;max-width:640px;margin:0 auto;">
+  <div style="width:80px;height:80px;background:var(--primary-light);color:var(--primary);border-radius:24px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;">
+    404
+  </div>
+
+  <h1 style="font-size:32px;font-weight:800;letter-spacing:-0.5px;margin-bottom:12px;">
+    Không Tìm Thấy Nội Dung
+  </h1>
+  <p style="color:var(--text-muted);font-size:15px;line-height:1.6;margin-bottom:32px;">
+    Đường dẫn bạn vừa truy cập có thể không chính xác, đã bị thay đổi hoặc cơ sở thể thao này đang được các thành viên khác trong nhóm hoàn thiện.
+  </p>
+
+  <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;">
+    <a href="/" class="btn btn-primary btn-lg">
+      ← Quay Về Trang Chủ
+    </a>
+    <a href="/coso/8" class="btn btn-secondary btn-lg">
+      🏓 Đến Cơ Sở Bóng Bàn
+    </a>
+  </div>
+
+  <!-- Internal links gợi ý -->
+  <div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--border);font-size:13px;color:var(--text-muted);">
+    Hoặc bạn có thể truy cập nhanh: 
+    <a href="/coso/8/dat-lich" style="font-weight:600;margin:0 6px;">Đặt Bàn Bóng Bàn</a> • 
+    <a href="{{ url_for('auth.login') }}" style="font-weight:600;margin:0 6px;">Đăng Nhập</a> • 
+    <a href="{{ url_for('auth.register') }}" style="font-weight:600;margin:0 6px;">Đăng Ký Hội Viên</a>
+  </div>
+</div>
+{% endblock %}

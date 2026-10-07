@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container section">
+
+  <div style="max-width:580px;margin:0 auto;">
+    <div style="margin-bottom:28px;text-align:center;">
+      <a href="{{ url_for('coso08.trang_chu') }}" style="font-size:13px;color:var(--text-muted);display:inline-flex;align-items:center;gap:6px;">
+        ← Quay lại Cơ sở Bóng Bàn
+      </a>
+      <h1 style="font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-top:12px;">Đánh Giá Trải Nghiệm</h1>
+      <p style="color:var(--text-muted);font-size:14px;">Ý kiến đóng góp giúp chúng tôi không ngừng hoàn thiện chất lượng phục vụ</p>
+    </div>
+
+    <div class="card card-body" style="box-shadow:var(--shadow-md);">
+      <form method="POST" action="{{ url_for('coso08.danh_gia') }}">
+        <div class="form-group" style="text-align:center;">
+          <label class="form-label" style="font-size:14px;color:var(--text-muted);">Đánh Giá Mức Độ Hài Lòng</label>
+          <div style="font-size:32px;color:var(--warning);cursor:pointer;margin:6px 0;" id="star-box">
+            <span onclick="chonSao(1)">★</span><span onclick="chonSao(2)">★</span><span onclick="chonSao(3)">★</span><span onclick="chonSao(4)">★</span><span onclick="chonSao(5)">★</span>
+          </div>
+          <input type="hidden" name="soSao" id="inp-so-sao" value="5">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nhận Xét Chi Tiết</label>
+          <textarea name="noiDung" class="form-control" rows="4" placeholder="Chia sẻ cảm nhận về chất lượng bàn, ánh sáng, thái độ phục vụ..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:10px;">
+          Gửi Đánh Giá Ngay →
+        </button>
+      </form>
+    </div>
+
+    {% if danhGiaList %}
+    <div style="margin-top:40px;">
+      <h3 style="font-size:17px;font-weight:700;margin-bottom:16px;">Đánh giá từ các hội viên gần đây</h3>
+      {% for dg in danhGiaList %}
+      <div class="card card-body" style="margin-bottom:12px;padding:16px 20px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <strong style="color:var(--text-main);font-size:14px;">👤 {{ dg.hoTen }}</strong>
+          <span style="color:var(--warning);font-size:12px;">★★★★★</span>
+        </div>
+        <p style="font-size:13px;color:var(--text-body);margin:0;line-height:1.5;">"{{ dg.noiDung }}"</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+  </div>
+
+</div>
+
+<script>
+function chonSao(n) {
+  document.getElementById('inp-so-sao').value = n;
+  const stars = document.getElementById('star-box').querySelectorAll('span');
+  stars.forEach((s, idx) => {
+    s.style.color = (idx < n) ? 'var(--warning)' : 'var(--border)';
+  });
+}
+</script>
+{% endblock %}

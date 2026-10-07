@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block meta_description %}Đặt lịch chơi thể thao trực tuyến tại chuỗi 10 cơ sở SportChain. Chọn cơ sở thể thao, khung giờ và dịch vụ nhanh chóng.{% endblock %}
+
+{% block content %}
+<div class="container section">
+
+  <!-- Breadcrumbs phân cấp -->
+  <div style="margin-bottom:28px;">
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:12px;">
+      <a href="/" style="color:var(--text-muted)">Trang chủ</a> 
+      <span>›</span> 
+      <span style="color:var(--text-main);font-weight:600;">Đặt Lịch Trực Tuyến</span>
+    </div>
+
+    <!-- Thanh tiến trình các bước đặt lịch -->
+    <div style="background:var(--bg-subtle);padding:14px 20px;border-radius:var(--radius-md);margin-bottom:28px;display:flex;align-items:center;gap:12px;overflow-x:auto;font-size:13px;border:1px solid var(--border);">
+      <span style="font-weight:800;color:var(--primary);display:flex;align-items:center;gap:6px;">
+        <span style="width:20px;height:20px;background:var(--primary);color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;">1</span>
+        Bước 1: Chọn Cơ Sở Thể Thao
+      </span>
+      <span style="color:var(--text-subtle)">➔</span>
+      <span style="color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+        <span style="width:20px;height:20px;background:var(--border);color:var(--text-muted);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;">2</span>
+        Bước 2: Chọn Sân / Bàn
+      </span>
+      <span style="color:var(--text-subtle)">➔</span>
+      <span style="color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+        <span style="width:20px;height:20px;background:var(--border);color:var(--text-muted);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;">3</span>
+        Bước 3: Chọn Khung Giờ
+      </span>
+      <span style="color:var(--text-subtle)">➔</span>
+      <span style="color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+        <span style="width:20px;height:20px;background:var(--border);color:var(--text-muted);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;">4</span>
+        Bước 4: Xác Nhận & Nhận QR
+      </span>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;">
+      <div>
+        <h1 style="font-size:32px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px;">
+          Bước 1: Chọn Cơ Sở Thể Thao
+        </h1>
+        <p style="color:var(--text-muted);font-size:15px;max-width:700px;line-height:1.6;margin:0;">
+          Vui lòng chọn cơ sở thể thao bạn muốn đặt lịch tập luyện. Hệ thống chuỗi 10 cơ sở kết nối chung cơ sở dữ liệu và tài khoản hội viên duy nhất.
+        </p>
+      </div>
+
+      <div style="font-size:13px;color:var(--text-muted);font-weight:600;">
+        Danh sách 10 môn thể thao thành viên
+      </div>
+    </div>
+  </div>
+
+  <!-- Lưới chọn 10 cơ sở thể thao -->
+  <div class="grid-5" style="margin-top:28px;">
+    {% for f in facilities %}
+    <div class="facility-card-clean {{ 'featured' if f.mine else '' }}"
+         style="{{ 'cursor:pointer;' if f.active else 'opacity:0.7;cursor:pointer;' }}"
+         onclick="chonCoSo('{{ f.ten }}', '{{ f.url if f.active else '' }}', {{ 'true' if f.active else 'false' }})">
+
+      {% if f.mine %}
+        <span class="fac-pill active">● ĐANG MỞ ĐẶT CHỖ</span>
+      {% else %}
+        <span class="fac-pill coming">Sắp mở</span>
+      {% endif %}
+
+      <div>
+        <div class="fac-icon-circle">{{ f.icon }}</div>
+        <div class="fac-title">{{ f.ten }}</div>
+        <div class="fac-desc">{{ f.mo_ta }}</div>
+      </div>
+
+      <div style="padding-top:14px;border-top:1px solid var(--border);margin-top:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span class="fac-price-tag">Từ {{ f.tu_gia }}</span>
+          {% if f.active %}
+            <span style="font-size:13px;font-weight:700;color:var(--primary);">Chọn cơ sở →</span>
+          {% else %}
+            <span style="font-size:12px;color:var(--text-subtle);">Xem thông tin</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<!-- Modal thông báo khi chọn cơ sở đang chờ đồng bộ -->
+<div id="modal-coso" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;">
+  <div class="card card-body" style="max-width:480px;width:90%;padding:32px;text-align:center;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);">
+    <div style="font-size:40px;margin-bottom:12px;">ℹ️</div>
+    <h3 id="modal-ten-coso" style="font-size:20px;font-weight:800;margin-bottom:8px;">Cơ Sở Thể Thao</h3>
+    <p style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:24px;">
+      Cơ sở này đang trong lộ trình tích hợp API của thành viên nhóm. Hiện tại chức năng đặt lịch trực tuyến, tính tiền tự động và cấp mã QR check-in đã được mở hoàn thiện tại <strong>Cơ Sở 08: Bóng Bàn</strong>.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <button onclick="dongModal()" class="btn btn-secondary">Đóng Lại</button>
+      <a href="/coso/8/dat-lich" class="btn btn-primary">Chuyển Sang Bóng Bàn →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function chonCoSo(ten, url, active) {
+  if (active && url) {
+    window.location.href = url + "/dat-lich";
+  } else {
+    document.getElementById('modal-ten-coso').innerText = 'Cơ Sở: ' + ten;
+    const modal = document.getElementById('modal-coso');
+    modal.style.display = 'flex';
+  }
+}
+
+function dongModal() {
+  document.getElementById('modal-coso').style.display = 'none';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block title %}Đặt Bàn Thành Công — Cảm Ơn Quý Khách | SportChain{% endblock %}
+{% block meta_description %}Xác nhận đặt bàn bóng bàn thành công tại Cơ sở 08 SportChain. Quét mã QR tại quầy tiếp tân để nhận bàn.{% endblock %}
+
+{% block content %}
+<div class="container section">
+
+  <!-- Breadcrumbs phân cấp -->
+  <div style="margin-bottom:28px;">
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);">
+      <a href="/" style="color:var(--text-muted)">Trang chủ</a> 
+      <span>›</span> 
+      <a href="/coso/8" style="color:var(--text-muted)">Bóng Bàn</a>
+      <span>›</span> 
+      <span style="color:var(--text-main);font-weight:600;">Xác Nhận Đặt Bàn</span>
+    </div>
+  </div>
+
+  <div class="card" style="max-width:640px;margin:0 auto;text-align:center;box-shadow:var(--shadow-lg);">
+    <div class="card-body" style="padding:48px 36px;">
+
+      <!-- Checkmark Icon -->
+      <div style="width:68px;height:68px;background:var(--success-light);color:var(--success);border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:32px;">
+        ✓
+      </div>
+
+      <h1 style="font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px;color:var(--text-main);">
+        Cảm Ơn Bạn Đã Đặt Bàn!
+      </h1>
+      <p style="color:var(--text-muted);font-size:15px;line-height:1.6;margin-bottom:28px;">
+        Yêu cầu giữ bàn bóng bàn của bạn đã được hệ thống ghi nhận thành công. Vui lòng lưu lại mã QR check-in bên dưới để quét khi đến cơ sở.
+      </p>
+
+      <!-- Khối tóm tắt thông tin đặt bàn -->
+      <div style="background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-md);padding:24px;text-align:left;margin-bottom:28px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:12px;">
+          <span style="font-size:13px;color:var(--text-muted);">Mã đơn giữ chỗ:</span>
+          <strong style="color:var(--primary);font-size:15px;">{{ don.maQR }}</strong>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;">
+          <span style="color:var(--text-muted);">Địa điểm chơi:</span>
+          <strong>Cơ Sở Bóng Bàn Đỉnh Cao (45 Đinh Tiên Hoàng, Q.1)</strong>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;">
+          <span style="color:var(--text-muted);">Thời gian chơi:</span>
+          <strong>{{ don.batDau.strftime('%d/%m/%Y') }} ({{ don.batDau.strftime('%H:%M') }} – {{ don.ketThuc.strftime('%H:%M') }})</strong>
+        </div>
+
+        {% if don.tenHLV %}
+        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;">
+          <span style="color:var(--text-muted);">Huấn luyện viên:</span>
+          <strong style="color:var(--primary);">{{ don.tenHLV }}</strong>
+        </div>
+        {% endif %}
+
+        <div style="display:flex;justify-content:space-between;font-size:16px;padding-top:12px;border-top:1px solid var(--border);margin-top:12px;">
+          <span style="font-weight:700;color:var(--text-main);">Tổng chi phí thanh toán:</span>
+          <strong style="color:var(--primary);font-size:20px;">{{ "{:,.0f}".format(don.tongTien) }}đ</strong>
+        </div>
+      </div>
+
+      <!-- Mã QR Check-in Box -->
+      <div style="padding:16px;border:1px dashed var(--border);border-radius:var(--radius-md);margin-bottom:32px;background:#fff;">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-weight:600;">MÃ CHECK-IN NHẬN BÀN TẠI QUẦY:</div>
+        <div style="display:inline-block;padding:12px 24px;background:var(--primary-light);color:var(--primary);font-size:22px;font-weight:900;letter-spacing:2px;border-radius:var(--radius-sm);border:1px solid var(--border);">
+          {{ don.maQR }}
+        </div>
+      </div>
+
+      <!-- Internal links điều hướng -->
+      <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+        <a href="{{ url_for('coso08.lich_su_dat') }}" class="btn btn-primary">
+          📋 Xem Lịch Sử Đặt Bàn Của Tôi
+        </a>
+        <a href="/" class="btn btn-secondary">
+          🏠 Quay Về Trang Chủ
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

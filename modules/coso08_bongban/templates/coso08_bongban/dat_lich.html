@@ -1,0 +1,271 @@
+{% extends "layout.html" %}
+{% block title %}Đặt Bàn Bóng Bàn Trực Tuyến — Giữ Chỗ Tức Thì | SportChain{% endblock %}
+{% block meta_description %}Đặt bàn bóng bàn online tại Cơ sở 08 SportChain. Chọn bàn ITTF, khung giờ chơi, thuê vợt bóng và HLV kèm 1-1 nhanh chóng.{% endblock %}
+
+{% block content %}
+<div class="container section">
+
+  <!-- 5. BREADCRUMBS PHÂN CẤP -->
+  <div style="margin-bottom:28px;">
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:10px;">
+      <a href="/" style="color:var(--text-muted)">Trang chủ</a> 
+      <span>›</span> 
+      <a href="/coso/8" style="color:var(--text-muted)">Bóng Bàn</a>
+      <span>›</span> 
+      <span style="color:var(--text-main);font-weight:600;">Đặt Bàn Trực Tuyến</span>
+    </div>
+
+    <h1 style="font-size:32px;font-weight:800;letter-spacing:-0.5px;margin-top:4px;">
+      Đặt Bàn Bóng Bàn Trực Tuyến
+    </h1>
+    <p style="color:var(--text-muted);font-size:14px;">Chọn bàn, khung giờ và dịch vụ kèm theo — Hệ thống tự động xác nhận giữ chỗ tức thì</p>
+  </div>
+
+  <form method="POST" action="{{ url_for('coso08.dat_lich') }}">
+    <div style="display:grid;grid-template-columns: 2fr 1fr;gap:32px;align-items:start;">
+
+      <!-- CỘT TRÁI: FORM CẤU HÌNH -->
+      <div style="display:flex;flex-direction:column;gap:24px;">
+
+        <!-- BƯỚC 1: CƠ SỞ THỂ THAO -->
+        <div class="card card-body" style="border:1.5px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:28px;height:28px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;">1</div>
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Bước 1</div>
+                <h2 style="font-size:16px;font-weight:800;margin:0;color:var(--text-main);">
+                  Cơ Sở 08: Bóng Bàn
+                </h2>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">
+                  📍 45 Đinh Tiên Hoàng, Quận 1, TP.HCM • Đang mở cửa
+                </div>
+              </div>
+            </div>
+            <div>
+              <a href="/dat-lich" class="btn btn-secondary btn-sm" title="Quay lại chọn cơ sở khác trong 10 môn">
+                🔄 Đổi Cơ Sở Khác
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- BƯỚC 2: CHỌN BÀN -->
+        <div class="card card-body">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+            <div style="width:28px;height:28px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;">2</div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Bước 2</div>
+              <h2 style="font-size:17px;font-weight:800;margin:0;">Chọn Bàn Chơi Bóng Bàn</h2>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;">
+            {% for b in danhSachBan %}
+            <label style="border:1.5px solid {{ 'var(--primary)' if b.taiNguyenId == banChonId else 'var(--border)' }};background:{{ 'var(--primary-light)' if b.taiNguyenId == banChonId else '#fff' }};border-radius:var(--radius-md);padding:16px;cursor:pointer;display:flex;gap:12px;align-items:flex-start;transition:all 0.15s ease;">
+              <input type="radio" name="taiNguyenId" value="{{ b.taiNguyenId }}" data-gia="{{ b.giaMoiGio }}" class="ban-radio" {% if b.taiNguyenId == banChonId %}checked{% endif %} onchange="capNhatGia(this)" style="margin-top:3px;accent-color:var(--primary);">
+              <div>
+                <div style="font-weight:700;font-size:14px;color:var(--text-main);margin-bottom:2px;">{{ b.ten }}</div>
+                <div style="font-size:12px;color:var(--primary);font-weight:600;margin-bottom:6px;">{{ b.badge or 'Chuẩn ITTF' }}</div>
+                <div style="font-size:15px;font-weight:800;color:var(--text-main);">
+                  {{ "{:,.0f}".format(b.giaMoiGio) }}đ<span style="font-size:12px;color:var(--text-muted);font-weight:400;">/giờ</span>
+                </div>
+              </div>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- BƯỚC 3: CHỌN THỜI GIAN -->
+        <div class="card card-body">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+            <div style="width:28px;height:28px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;">3</div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Bước 3</div>
+              <h2 style="font-size:17px;font-weight:800;margin:0;">Thời Gian Đặt Bàn</h2>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Ngày Chơi</label>
+              <input type="date" name="ngay" id="inp-ngay" class="form-control" value="{{ ngayMacDinh }}" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Số Người Chơi (Tối đa 4)</label>
+              <input type="number" name="soNguoi" class="form-control" value="2" min="1" max="4">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Giờ Bắt Đầu</label>
+              <select name="gioBatDau" id="inp-gio-bd" class="form-control" onchange="tinhToanLai()">
+                <option value="08:00">08:00 sáng</option>
+                <option value="09:00" selected>09:00 sáng</option>
+                <option value="10:00">10:00 sáng</option>
+                <option value="14:00">14:00 chiều</option>
+                <option value="15:00">15:00 chiều</option>
+                <option value="16:00">16:00 chiều</option>
+                <option value="17:00">17:00 chiều (Giờ cao điểm)</option>
+                <option value="18:00">18:00 tối (Giờ cao điểm)</option>
+                <option value="19:00">19:00 tối (Giờ cao điểm)</option>
+                <option value="20:00">20:00 tối (Giờ cao điểm)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Giờ Kết Thúc</label>
+              <select name="gioKetThuc" id="inp-gio-kt" class="form-control" onchange="tinhToanLai()">
+                <option value="09:30">09:30 (1.5 tiếng)</option>
+                <option value="10:00">10:00 (1 tiếng)</option>
+                <option value="10:30">10:30 (1.5 tiếng)</option>
+                <option value="11:00" selected>11:00 (2 tiếng)</option>
+                <option value="15:30">15:30</option>
+                <option value="17:00">17:00</option>
+                <option value="18:30">18:30</option>
+                <option value="19:00">19:00</option>
+                <option value="20:00">20:00</option>
+                <option value="21:30">21:30</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- BƯỚC 4: HLV & DỤNG CỤ -->
+        <div class="card card-body">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+            <div style="width:28px;height:28px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;">4</div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Bước 4</div>
+              <h2 style="font-size:17px;font-weight:800;margin:0;">Huấn Luyện Viên & Dụng Cụ Kèm Theo</h2>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Học Kèm Với Huấn Luyện Viên (Tùy chọn)</label>
+            <select name="hlvId" id="sel-hlv" class="form-control" onchange="tinhToanLai()">
+              <option value="" data-gia="0">— Tự chơi (Không thuê HLV) —</option>
+              {% for h in danhSachHlv %}
+              <option value="{{ h.hlvId }}" data-gia="{{ h.giaGio }}">
+                {{ h.hoTen }} ({{ h.danhHieu }}) — +{{ "{:,.0f}".format(h.giaGio) }}đ/h
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-top:16px;">
+            <label class="form-label">Dụng Cụ & Dịch Vụ Phục Vụ Tại Quầy</label>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+              {% for dv in danhSachDv %}
+              <label style="border:1px solid var(--border);background:#fff;border-radius:var(--radius-sm);padding:12px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.15s ease;">
+                <input type="checkbox" name="dichVuIds" value="{{ dv.dichVuId }}" data-gia="{{ dv.gia }}" class="chk-dv" onchange="tinhToanLai()" style="width:16px;height:16px;accent-color:var(--primary);">
+                <div style="font-size:13px;line-height:1.4;">
+                  <strong style="color:var(--text-main);">{{ dv.ten }}</strong><br>
+                  <span style="color:var(--primary);font-weight:700;">+{{ "{:,.0f}".format(dv.gia) }}đ</span>
+                </div>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CỘT PHẢI: CHECKOUT SUMMARY (CLEAN WHITE STICKY) -->
+      <div style="position:sticky;top:90px;">
+        <div class="card card-body" style="box-shadow:var(--shadow-md);">
+          <h3 style="font-size:17px;font-weight:700;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+            Chi Tiết Đơn Đặt Bàn
+          </h3>
+
+          <div style="font-size:13px;padding-bottom:14px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted)">Cơ sở:</span>
+              <strong style="color:var(--primary);">🏓 Cơ Sở 08 — Bóng Bàn</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted)">Tiền thuê bàn:</span>
+              <strong id="lbl-tien-ban" style="color:var(--text-main);">120.000đ</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted)">Tiền HLV kèm:</span>
+              <strong id="lbl-tien-hlv" style="color:var(--text-main);">0đ</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="color:var(--text-muted)">Dụng cụ / dịch vụ:</span>
+              <strong id="lbl-tien-dv" style="color:var(--text-main);">0đ</strong>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 24px;">
+            <span style="font-size:14px;font-weight:700;color:var(--text-muted);">TỔNG CỘNG:</span>
+            <span id="lbl-tong-tien" style="font-size:26px;font-weight:900;color:var(--primary);letter-spacing:-0.5px;">
+              120.000đ
+            </span>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg">
+            Xác Nhận & Đặt Bàn Ngay
+          </button>
+
+          <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:14px;line-height:1.5;">
+            🔒 Sau khi đặt thành công, hệ thống sẽ cấp mã QR và chuyển sang trang xác nhận.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </form>
+
+</div>
+
+<script>
+let currentGiaMoiGio = 60000;
+
+function capNhatGia(radio) {
+  currentGiaMoiGio = parseFloat(radio.getAttribute('data-gia') || 60000);
+  document.querySelectorAll('.ban-radio').forEach(r => {
+    r.parentElement.style.borderColor = r.checked ? 'var(--primary)' : 'var(--border)';
+    r.parentElement.style.background = r.checked ? 'var(--primary-light)' : '#fff';
+  });
+  tinhToanLai();
+}
+
+function tinhToanLai() {
+  const gioBd = document.getElementById('inp-gio-bd').value;
+  const gioKt = document.getElementById('inp-gio-kt').value;
+
+  const [h1, m1] = gioBd.split(':').map(Number);
+  const [h2, m2] = gioKt.split(':').map(Number);
+  let soGio = ((h2 * 60 + m2) - (h1 * 60 + m1)) / 60.0;
+  if (soGio <= 0) soGio = 1.0;
+
+  let giaThucTe = currentGiaMoiGio;
+  if (h1 >= 17) giaThucTe += 10000;
+  const tienBan = Math.round(giaThucTe * soGio);
+
+  const selHlv = document.getElementById('sel-hlv');
+  const giaHlvGio = parseFloat(selHlv.options[selHlv.selectedIndex].getAttribute('data-gia') || 0);
+  const tienHlv = Math.round(giaHlvGio * soGio);
+
+  let tienDv = 0;
+  document.querySelectorAll('.chk-dv:checked').forEach(c => {
+    tienDv += parseFloat(c.getAttribute('data-gia') || 0);
+  });
+
+  const tong = tienBan + tienHlv + tienDv;
+  const fmt = n => n.toLocaleString('vi-VN') + 'đ';
+
+  document.getElementById('lbl-tien-ban').textContent = fmt(tienBan);
+  document.getElementById('lbl-tien-hlv').textContent = fmt(tienHlv);
+  document.getElementById('lbl-tien-dv').textContent = fmt(tienDv);
+  document.getElementById('lbl-tong-tien').textContent = fmt(tong);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const checkedRadio = document.querySelector('.ban-radio:checked');
+  if (checkedRadio) currentGiaMoiGio = parseFloat(checkedRadio.getAttribute('data-gia') || 60000);
+  tinhToanLai();
+});
+</script>
+{% endblock %}

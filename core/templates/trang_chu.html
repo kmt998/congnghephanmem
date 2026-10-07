@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+{% block title %}SportChain — Hệ Thống Quản Lý Trung Tâm Thể Thao Đa Năng{% endblock %}
+{% block meta_description %}SportChain là nền tảng quản lý chuỗi 10 cơ sở thể dục thể thao, hỗ trợ đặt sân bãi theo thời gian thực, quản lý thẻ hội viên thông minh và kết nối huấn luyện viên chuyên nghiệp.{% endblock %}
+
+{% block content %}
+
+<!-- ═══ 1. HERO SECTION (CTA ABOVE THE FOLD) ═════════════════════════════════ -->
+<div class="hero-clean">
+  <div class="container">
+    <div class="hero-badge-clean">
+      ● HỆ THỐNG LIÊN KẾT 10 CƠ SỞ THỂ THAO THỜI GIAN THỰC
+    </div>
+
+    <h1>Nền Tảng Đặt Lịch & Quản Lý<br/><span>Trung Tâm Thể Thao Đa Năng</span></h1>
+    <p>Đặt sân bãi trực tuyến theo thời gian thực • Kết nối huấn luyện viên đẳng cấp quốc tế • Tích hợp thẻ hội viên dùng chung toàn chuỗi chỉ với 1 tài khoản duy nhất.</p>
+
+    <!-- Nút Kêu Gọi Hành Động (CTA Above The Fold - Nhìn thấy ngay không cần cuộn) -->
+    <div class="hero-clean-btns">
+      <a href="/coso/8" class="btn btn-primary btn-lg" title="Xem chi tiết cơ sở bóng bàn">
+        🏓 Khám Phá Cơ Sở Bóng Bàn
+      </a>
+      <a href="/dat-lich" class="btn btn-secondary btn-lg" title="Đặt lịch chơi trực tuyến nhanh">
+        ⚡ Đặt Lịch Chơi Trực Tuyến
+      </a>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ═══ 3. DANH SÁCH 10 CƠ SỞ THỂ THAO (INTERNAL LINKS) ══════════════════════ -->
+<div class="section container">
+  <h2 class="section-title" style="margin-bottom:28px;">Danh Sách 10 Cơ Sở Thể Thao</h2>
+
+  <div class="grid-5">
+    {% for f in facilities %}
+    <a href="{{ f.url if f.active else '#' }}"
+       class="facility-card-clean {{ 'featured' if f.mine else '' }}"
+       style="{{ 'opacity:.6;cursor:default;' if not f.active else '' }}"
+       title="Xem chi tiết môn {{ f.ten }}">
+
+      {% if f.mine %}
+        <span class="fac-pill active">ĐANG HOẠT ĐỘNG</span>
+      {% elif not f.active %}
+        <span class="fac-pill coming">Sắp mở</span>
+      {% endif %}
+
+      <div>
+        <div class="fac-icon-circle">{{ f.icon }}</div>
+        <div class="fac-title">{{ f.ten }}</div>
+        <div class="fac-desc">{{ f.mo_ta }}</div>
+      </div>
+
+      <div style="padding-top:14px;border-top:1px solid var(--border);margin-top:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span class="fac-price-tag">Từ {{ f.tu_gia }}</span>
+          {% if f.active %}
+            <span style="font-size:12px;font-weight:700;color:var(--primary);">Vào cơ sở →</span>
+          {% else %}
+            <span style="font-size:11px;color:var(--text-subtle);">Chờ tích hợp</span>
+          {% endif %}
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ═══ 4. TIỆN ÍCH DÀNH CHO HỘI VIÊN ═════════════════════════════════════════ -->
+<div style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:72px 0;">
+  <div class="container">
+    <div style="text-align:center;max-width:600px;margin:0 auto 48px;">
+      <h2 class="section-title" style="justify-content:center;">Trải Nghiệm Thể Thao Chuẩn Mực</h2>
+      <p class="section-sub" style="margin-bottom:0;">Quy trình đặt sân và tập luyện được tối ưu hóa cho từng hội viên</p>
+    </div>
+
+    <div class="grid-4">
+      <div style="padding:22px;border-radius:var(--radius-lg);background:var(--bg-subtle);">
+        <div style="width:44px;height:44px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px;box-shadow:var(--shadow-xs);">
+          ⚡
+        </div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Đặt Lịch Tức Thì</h3>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.6;">
+          Kiểm tra khung giờ trống tự động theo thời gian thực, giữ chỗ chỉ với vài thao tác trực tuyến.
+        </p>
+        <a href="/dat-lich" style="font-size:13px;font-weight:700;margin-top:10px;display:inline-block;">Thử đặt ngay →</a>
+      </div>
+
+      <div style="padding:22px;border-radius:var(--radius-lg);background:var(--bg-subtle);">
+        <div style="width:44px;height:44px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px;box-shadow:var(--shadow-xs);">
+          📱
+        </div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Mã QR Check-in</h3>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.6;">
+          Hệ thống cấp mã QR cho từng đơn đặt. Đến sân quét mã tại quầy là nhận sân vào chơi ngay.
+        </p>
+      </div>
+
+      <div style="padding:22px;border-radius:var(--radius-lg);background:var(--bg-subtle);">
+        <div style="width:44px;height:44px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px;box-shadow:var(--shadow-xs);">
+          🏆
+        </div>
+        <h3 style="font-size:17px;margin-bottom:8px;">HLV Chuyên Nghiệp</h3>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.6;">
+          Đội ngũ kiện tướng và VĐV có chứng chỉ quốc tế sẵn sàng kèm cặp nâng cao trình độ.
+        </p>
+      </div>
+
+      <div style="padding:22px;border-radius:var(--radius-lg);background:var(--bg-subtle);">
+        <div style="width:44px;height:44px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px;box-shadow:var(--shadow-xs);">
+          💳
+        </div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Gói Hội Viên Đa Năng</h3>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.6;">
+          Ưu đãi giảm giá giờ chơi từ 10% đến 30%, tủ đồ riêng và mượn dụng cụ tập miễn phí.
+        </p>
+        <a href="{{ url_for('auth.register') }}" style="font-size:13px;font-weight:700;margin-top:10px;display:inline-block;">Đăng ký hội viên →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

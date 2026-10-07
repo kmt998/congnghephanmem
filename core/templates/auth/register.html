@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div style="min-height:72vh;display:flex;align-items:center;justify-content:center;padding:48px 16px;">
+  <div class="card" style="width:100%;max-width:460px;border-radius:var(--radius-xl);box-shadow:var(--shadow-md);">
+    <div class="card-body" style="padding:40px 32px;">
+
+      <div class="text-center" style="margin-bottom:28px;">
+        <div style="width:52px;height:52px;background:var(--primary-light);color:var(--primary);border-radius:14px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;">
+          🏓
+        </div>
+        <h1 style="font-size:24px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">Đăng Ký Hội Viên</h1>
+        <p style="font-size:13px;color:var(--text-muted);">Tạo tài khoản để đặt bàn nhanh và nhận ưu đãi giờ chơi</p>
+      </div>
+
+      <form method="POST" action="{{ url_for('auth.register') }}">
+        <div class="form-group">
+          <label class="form-label">Họ và Tên</label>
+          <input name="ho_ten" type="text" class="form-control" placeholder="Nguyễn Văn A" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Địa Chỉ Email</label>
+          <input name="email" type="email" class="form-control" placeholder="email@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tên Đăng Nhập</label>
+          <input name="ten_dang_nhap" type="text" class="form-control" placeholder="Viết liền không dấu (vd: hoanglong)" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Mật Khẩu</label>
+            <input name="mat_khau" type="password" class="form-control" placeholder="Tối thiểu 6 ký tự" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Xác Nhận Mật Khẩu</label>
+            <input name="xac_nhan" type="password" class="form-control" placeholder="Nhập lại mật khẩu" required minlength="6">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:10px;">
+          Tạo Tài Khoản Hội Viên →
+        </button>
+      </form>
+
+      <div class="text-center" style="margin-top:20px;font-size:13px;color:var(--text-muted);">
+        Đã có tài khoản?
+        <a href="{{ url_for('auth.login') }}" style="font-weight:700;color:var(--primary);">Đăng nhập ngay</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

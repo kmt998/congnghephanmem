@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container section">
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h1 style="font-size:28px;font-weight:800;letter-spacing:-0.5px;">Lịch Sử Đặt Bàn Của Tôi</h1>
+      <p style="color:var(--text-muted);font-size:14px;">Danh sách đơn đặt bàn tại Cơ sở 08 (Bóng Bàn Đỉnh Cao)</p>
+    </div>
+    <a href="{{ url_for('coso08.dat_lich') }}" class="btn btn-primary">
+      ➕ Đặt Thêm Bàn Mới
+    </a>
+  </div>
+
+  {% if not lichSu %}
+  <div class="card card-body text-center" style="padding:56px 20px;">
+    <div style="font-size:44px;margin-bottom:12px;">🏓</div>
+    <h3 style="font-size:18px;font-weight:700;margin-bottom:6px;">Chưa có đơn đặt bàn nào</h3>
+    <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px;">Hãy chọn bàn và khung giờ phù hợp để đến chơi ngay hôm nay.</p>
+    <div>
+      <a href="{{ url_for('coso08.dat_lich') }}" class="btn btn-primary">Đặt Bàn Bóng Bàn Ngay</a>
+    </div>
+  </div>
+  {% else %}
+  <div class="table-clean-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Mã Booking</th>
+          <th>Bàn Chơi</th>
+          <th>Thời Gian</th>
+          <th>Dịch Vụ & HLV Kèm</th>
+          <th style="text-align:right;">Tổng Tiền</th>
+          <th style="text-align:center;">Trạng Thái</th>
+          <th style="text-align:center;">Mã Check-in</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in lichSu %}
+        <tr>
+          <td style="font-weight:700;color:var(--primary);">#{{ d.datLichId }}</td>
+          <td><strong style="color:var(--text-main);">{{ d.tenBan }}</strong></td>
+          <td>
+            <div style="font-weight:600;">{{ d.batDau.strftime('%d/%m/%Y') }}</div>
+            <div style="font-size:12px;color:var(--text-muted);">{{ d.batDau.strftime('%H:%M') }} – {{ d.ketThuc.strftime('%H:%M') }}</div>
+          </td>
+          <td>
+            {% if d.tenHLV %}<span class="badge badge-info" style="margin-bottom:3px;">HLV: {{ d.tenHLV }}</span><br>{% endif %}
+            {% if d.dsDichVu %}
+              <span style="font-size:12px;color:var(--text-muted);">{{ d.dsDichVu | join(', ') }}</span>
+            {% else %}
+              <span style="font-size:12px;color:var(--text-subtle);">Không kèm dịch vụ</span>
+            {% endif %}
+          </td>
+          <td style="text-align:right;font-weight:800;color:var(--text-main);">
+            {{ "{:,.0f}".format(d.tongTien) }}đ
+          </td>
+          <td style="text-align:center;">
+            {% if d.trangThai == 'DaThanhToan' %}
+              <span class="badge badge-success">Đã thanh toán</span>
+            {% elif d.trangThai == 'ChoThanhToan' %}
+              <span class="badge badge-warning">Chờ tại quầy</span>
+            {% elif d.trangThai == 'Huy' %}
+              <span class="badge badge-danger">Đã hủy</span>
+            {% else %}
+              <span class="badge badge-info">{{ d.trangThai }}</span>
+            {% endif %}
+          </td>
+          <td style="text-align:center;">
+            <code style="background:var(--bg-subtle);color:var(--primary);padding:4px 8px;border-radius:6px;font-weight:700;font-size:12px;border:1px solid var(--border);">{{ d.maQR }}</code>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

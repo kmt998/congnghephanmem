@@ -1,0 +1,767 @@
+/* ============================================================================
+   core/static/css/main.css — CLEAN & MINIMALIST LUXURY DESIGN SYSTEM
+   Inspiration: Apple • Stripe • Playtomic
+   Theme: Pure White • Crisp Typography • Subtle Shadows • Refined Accents
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── 1. Color Palette & Tokens ───────────────────────────────────────────── */
+:root {
+  --bg-page:        #F8FAFC;
+  --bg-card:        #FFFFFF;
+  --bg-subtle:      #F1F5F9;
+
+  --border:         #E2E8F0;
+  --border-light:   #F1F5F9;
+  --border-hover:   #CBD5E1;
+
+  /* Primary Blue - Playtomic / Stripe Style */
+  --primary:        #2563EB;
+  --primary-hover:  #1D4ED8;
+  --primary-light:  #EFF6FF;
+
+  --success:        #059669;
+  --success-light:  #ECFDF5;
+  --warning:        #D97706;
+  --warning-light:  #FFFBEB;
+  --danger:         #DC2626;
+  --danger-light:   #FEF2F2;
+
+  --text-main:      #0F172A;
+  --text-body:      #334155;
+  --text-muted:     #64748B;
+  --text-subtle:    #94A3B8;
+
+  --font-main:      'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body:      'Inter', sans-serif;
+
+  --radius-sm:      8px;
+  --radius-md:      12px;
+  --radius-lg:      16px;
+  --radius-xl:      24px;
+  --radius-full:    9999px;
+
+  --shadow-xs:      0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-sm:      0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-md:      0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg:      0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+}
+
+/* ── 2. Reset & Typography ───────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-page);
+  color: var(--text-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-main);
+  color: var(--text-main);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: all 0.18s ease;
+}
+a:hover {
+  color: var(--primary-hover);
+}
+
+/* ── 3. Layout Containers ────────────────────────────────────────────────── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: 64px 0;
+}
+.section-sm {
+  padding: 40px 0;
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.section-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+/* ── 4. Header & Navbar (Clean White Sticky) ─────────────────────────────── */
+.site-header {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-main);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+}
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+}
+.brand span {
+  color: var(--primary);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  color: var(--text-body);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-main);
+  transition: all 0.15s ease;
+}
+.nav-link:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+}
+.nav-link.active {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* User Menu */
+.user-menu-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+}
+.user-menu-pill:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
+}
+.user-avatar-small {
+  width: 30px;
+  height: 30px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+.user-name-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.user-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 200px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 6px 0;
+  z-index: 200;
+}
+.user-menu-pill:hover .user-dropdown-menu {
+  display: block;
+}
+.user-dropdown-menu a {
+  display: block;
+  padding: 9px 16px;
+  font-size: 13px;
+  color: var(--text-body);
+}
+.user-dropdown-menu a:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+}
+.user-dropdown-menu hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 4px 0;
+}
+
+/* ── 5. Buttons (Apple / Stripe Crisp Style) ─────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-main);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: 1px solid transparent;
+  line-height: 1.4;
+}
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 1px 2px 0 rgba(37, 99, 235, 0.2);
+}
+.btn-primary:hover {
+  background: var(--primary-hover);
+  color: #fff;
+  box-shadow: 0 4px 12px 0 rgba(37, 99, 235, 0.25);
+}
+
+.btn-secondary {
+  background: #fff;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border-hover);
+  color: var(--text-main);
+}
+
+.btn-dark {
+  background: var(--text-main);
+  color: #fff;
+}
+.btn-dark:hover {
+  background: #1E293B;
+  color: #fff;
+}
+
+.btn-sm {
+  padding: 7px 14px;
+  font-size: 13px;
+}
+.btn-lg {
+  padding: 14px 28px;
+  font-size: 15px;
+  border-radius: var(--radius-md);
+}
+.btn-block {
+  width: 100%;
+}
+
+/* ── 6. Minimalist Cards ─────────────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+.card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.card-body {
+  padding: 24px;
+}
+
+/* ── 7. Facility Grid Cards (Trang Chủ) ─────────────────────────────────── */
+.grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.facility-card-clean {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-decoration: none;
+  position: relative;
+}
+.facility-card-clean:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+.facility-card-clean.featured {
+  border: 2px solid var(--primary);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+}
+
+.fac-icon-circle {
+  width: 54px;
+  height: 54px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+}
+.facility-card-clean:hover .fac-icon-circle {
+  background: var(--primary-light);
+}
+
+.fac-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+.fac-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  min-height: 38px;
+}
+.fac-price-tag {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.fac-pill {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.fac-pill.active {
+  background: var(--success-light);
+  color: var(--success);
+}
+.fac-pill.coming {
+  background: var(--bg-subtle);
+  color: var(--text-subtle);
+}
+
+/* ── 8. Hero Section (Clean Minimalist White) ────────────────────────────── */
+.hero-clean {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 72px 0 64px;
+  text-align: center;
+}
+.hero-badge-clean {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--primary-light);
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 20px;
+}
+.hero-clean h1 {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -1px;
+  line-height: 1.15;
+  margin-bottom: 18px;
+}
+.hero-clean h1 span {
+  color: var(--primary);
+}
+.hero-clean p {
+  font-size: 17px;
+  color: var(--text-muted);
+  max-width: 620px;
+  margin: 0 auto 32px;
+  line-height: 1.6;
+}
+.hero-clean-btns {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ── 9. Stats Banner (Clean) ─────────────────────────────────────────────── */
+.stats-banner {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  text-align: center;
+}
+.stat-box {
+  border-right: 1px solid var(--border);
+  padding: 0 16px;
+}
+.stat-box:last-child {
+  border-right: none;
+}
+.stat-number {
+  font-family: var(--font-main);
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+.stat-label-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* ── 10. Forms & Controls ────────────────────────────────────────────────── */
+.form-group {
+  margin-bottom: 18px;
+}
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: 14px;
+  font-family: var(--font-body);
+  transition: all 0.15s ease;
+  outline: none;
+}
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ── 11. Bàn Bóng Bàn Photo Card ─────────────────────────────────────────── */
+.table-photo-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+.table-photo-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+.table-img-wrap {
+  height: 190px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-subtle);
+}
+.table-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.table-photo-card:hover .table-img-wrap img {
+  transform: scale(1.03);
+}
+
+.table-status-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  color: var(--success);
+  box-shadow: var(--shadow-sm);
+}
+
+.table-price-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 800;
+  background: rgba(15, 23, 42, 0.85);
+  color: #fff;
+  backdrop-filter: blur(4px);
+}
+
+/* ── 12. Tabs Component (Clean Underline Style) ───────────────────────────── */
+.tabs-clean {
+  display: flex;
+  gap: 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.tab-link {
+  background: none;
+  border: none;
+  padding: 12px 0;
+  font-family: var(--font-main);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+}
+.tab-link:hover {
+  color: var(--text-main);
+}
+.tab-link.active {
+  color: var(--primary);
+  font-weight: 700;
+}
+.tab-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+.tab-pane {
+  display: none;
+}
+.tab-pane.active {
+  display: block;
+}
+
+/* ── 13. Tables ──────────────────────────────────────────────────────────── */
+.table-clean-wrap {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+thead tr {
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border);
+}
+th {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+td {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-body);
+}
+tr:last-child td {
+  border-bottom: none;
+}
+tr:hover td {
+  background: #FBFCFD;
+}
+
+/* ── 14. Flash Alerts ────────────────────────────────────────────────────── */
+.flash-wrap {
+  position: fixed;
+  top: 85px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 400px;
+}
+.alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+  background: #fff;
+  border: 1px solid var(--border);
+}
+.alert-success {
+  border-left: 4px solid var(--success);
+  color: var(--success);
+}
+.alert-danger {
+  border-left: 4px solid var(--danger);
+  color: var(--danger);
+}
+.alert-warning {
+  border-left: 4px solid var(--warning);
+  color: var(--warning);
+}
+
+/* ── 15. Badges ──────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+}
+.badge-success { background: var(--success-light); color: var(--success); }
+.badge-info    { background: var(--primary-light); color: var(--primary); }
+.badge-warning { background: var(--warning-light); color: var(--warning); }
+.badge-danger  { background: var(--danger-light);  color: var(--danger); }
+
+/* ── 16. Footer (Clean White) ────────────────────────────────────────────── */
+.footer-clean {
+  background: #fff;
+  border-top: 1px solid var(--border);
+  padding: 48px 0 32px;
+  margin-top: 80px;
+}
+.footer-clean-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.footer-copyright {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ── 17. Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .grid-5 { grid-template-columns: repeat(3, 1fr); }
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .grid-5, .grid-3, .grid-4, .grid-2 { grid-template-columns: 1fr; }
+  .hero-clean h1 { font-size: 32px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+  .form-row { grid-template-columns: 1fr; }
+}

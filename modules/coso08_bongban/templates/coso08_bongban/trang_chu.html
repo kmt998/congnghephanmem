@@ -1,0 +1,172 @@
+{% extends "layout.html" %}
+{% block title %}Cơ Sở Bóng Bàn Đỉnh Cao — Đặt Bàn Thi Đấu ITTF | SportChain{% endblock %}
+{% block meta_description %}Cơ sở bóng bàn tiêu chuẩn ITTF tại Quận 1 TP.HCM. 16 bàn thi đấu DHS Rainbow, thảm Enlio, robot PongBot AI và đội ngũ HLV kiện tướng quốc gia.{% endblock %}
+
+{% block content %}
+
+<!-- ═══ BANNER CƠ SỞ BÓNG BÀN (CTA ABOVE THE FOLD) ═══════════════════════════ -->
+<div style="background:#fff;border-bottom:1px solid var(--border);padding:44px 0 36px;">
+  <div class="container">
+
+    <!-- 5. BREADCRUMBS PHÂN CẤP -->
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:14px;">
+      <a href="/" style="color:var(--text-muted)">Trang chủ</a> 
+      <span>›</span> 
+      <a href="/" style="color:var(--text-muted)">Cơ sở thể thao</a>
+      <span>›</span> 
+      <span style="color:var(--text-main);font-weight:600;">Bóng Bàn</span>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px;">
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:3px 10px;background:var(--success-light);border-radius:var(--radius-full);font-size:11px;font-weight:700;color:var(--success);margin-bottom:10px;">
+          ● TIÊU CHUẨN THI ĐẤU QUỐC TẾ ITTF
+        </div>
+        <h1 style="font-size:36px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px;">
+          Cơ Sở Bóng Bàn Đỉnh Cao
+        </h1>
+        <p style="font-size:15px;color:var(--text-muted);max-width:650px;line-height:1.6;margin-bottom:16px;">
+          Hệ thống bàn bóng bàn DHS Rainbow, Butterfly Octet 25, thảm thi đấu Enlio chống trượt, đèn LED chống chói tiêu chuẩn và Robot bắn bóng tự động PongBot AI.
+        </p>
+
+        <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:13px;color:var(--text-body);">
+          <span>📍 <strong>45 Đinh Tiên Hoàng</strong>, Quận 1, TP.HCM</span>
+          <span>🕐 <strong>07:30 – 21:30</strong> (Mở cửa hàng ngày)</span>
+          <span>📞 Hotline: <strong>028.3822.8899</strong></span>
+        </div>
+      </div>
+
+      <!-- 2. NÚT CTA ABOVE THE FOLD (Nhìn thấy ngay không cần cuộn) -->
+      <div>
+        <a href="{{ url_for('coso08.dat_lich') }}" class="btn btn-primary btn-lg" title="Đặt bàn bóng bàn ngay">
+          📅 Đặt Bàn Trực Tuyến Ngay →
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ NỘI DUNG CHÍNH (CLEAN TABS) ══════════════════════════════════════════ -->
+<div class="container section">
+
+  <!-- Underline Navigation Tabs -->
+  <div class="tabs-clean">
+    <button class="tab-link active" id="tab-ban" onclick="showTab('ban')">Danh Sách Bàn Bóng Bàn ({{ danhSachBan|length }})</button>
+    <button class="tab-link" id="tab-hlv" onclick="showTab('hlv')">Huấn Luyện Viên Kèm 1-1</button>
+    <button class="tab-link" id="tab-dichvu" onclick="showTab('dichvu')">Dụng Cụ & Dịch Vụ</button>
+  </div>
+
+  <!-- ── PANEL 1: DANH SÁCH BÀN ────────────────────────────────────────────── -->
+  <div class="tab-pane active" id="panel-ban">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+      <div>
+        <h2 style="font-size:20px;font-weight:800;">Bàn Bóng Bàn Sẵn Sàng Phục Vụ</h2>
+        <p style="font-size:13px;color:var(--text-muted);">Mỗi bàn đều được vệ sinh và căn chỉnh lưới đúng chuẩn 15.25cm</p>
+      </div>
+      <a href="{{ url_for('coso08.dat_lich') }}" class="btn btn-secondary btn-sm">Xem lịch trống toàn bộ →</a>
+    </div>
+
+    <div class="grid-3">
+      {% for ban in danhSachBan %}
+      <div class="table-photo-card">
+        <div class="table-img-wrap">
+          <!-- 11. ALT TEXT ON IMAGES (Mô tả chi tiết ảnh chuẩn tiếp cận & SEO) -->
+          {% if 'Rainbow' in ban.ten %}
+            <img src="https://images.unsplash.com/photo-1534158914592-062992fbe900?auto=format&fit=crop&w=700&q=80" alt="Bàn bóng bàn thi đấu DHS Rainbow Pro mặt bàn 25mm chuẩn ITTF sàn thảm đỏ">
+          {% elif 'Butterfly' in ban.ten %}
+            <img src="https://images.unsplash.com/photo-1609710228159-0fa9bd7c0827?auto=format&fit=crop&w=700&q=80" alt="Bàn bóng bàn Butterfly Octet 25 cao cấp chống lóa có vách ngăn chắn bóng">
+          {% elif 'Robot' in ban.ten %}
+            <img src="https://images.unsplash.com/photo-1511067007398-7e4b90cfa4bc?auto=format&fit=crop&w=700&q=80" alt="Bàn tập bóng bàn tích hợp máy bắn bóng PongBot AI thông minh đa điểm">
+          {% elif 'VIP' in ban.ten %}
+            <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=700&q=80" alt="Phòng tập bóng bàn VIP đơn lập có điều hòa riêng và sofa nghỉ ngơi">
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=700&q=80" alt="Bàn bóng bàn Double Fish 233 tiêu chuẩn thi đấu quốc gia">
+          {% endif %}
+
+          <span class="table-status-badge">● Sẵn sàng</span>
+          <span class="table-price-badge">{{ "{:,.0f}".format(ban.giaMoiGio) }}đ / giờ</span>
+        </div>
+
+        <div style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;flex:1;">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+              <h3 style="font-size:17px;font-weight:700;">{{ ban.ten }}</h3>
+              <span class="badge badge-info">{{ ban.badge or 'Chuẩn ITTF' }}</span>
+            </div>
+            <p style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:16px;">
+              {{ ban.moTa or 'Bàn bóng bàn tiêu chuẩn tập luyện và thi đấu chuyên nghiệp.' }}
+            </p>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--border);">
+            <div style="font-size:12px;color:var(--text-muted);">
+              Sức chứa: <strong>{{ ban.sucChua }} người</strong>
+            </div>
+            <a href="{{ url_for('coso08.dat_lich', ban_id=ban.taiNguyenId) }}" class="btn btn-primary btn-sm">
+              Chọn Đặt Bàn
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ── PANEL 2: HUẤN LUYỆN VIÊN ─────────────────────────────────────────── -->
+  <div class="tab-pane" id="panel-hlv">
+    <div style="margin-bottom:24px;">
+      <h2 style="font-size:20px;font-weight:800;">Đội Ngũ Huấn Luyện Viên</h2>
+      <p style="font-size:13px;color:var(--text-muted);">Học kèm 1-1 hỗ trợ chỉnh sửa tư thế giật bóng, gò bóng và giao bóng hiện đại</p>
+    </div>
+
+    <div class="grid-3">
+      {% for hlv in danhSachHlv %}
+      <div class="card card-body" style="text-align:center;padding:28px 24px;">
+        <div style="width:72px;height:72px;background:var(--primary-light);color:var(--primary);border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:32px;">
+          👨‍🏫
+        </div>
+        <h3 style="font-size:18px;margin-bottom:4px;">{{ hlv.hoTen }}</h3>
+        <div style="font-size:13px;color:var(--primary);font-weight:700;margin-bottom:12px;">{{ hlv.danhHieu }}</div>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:18px;min-height:40px;">
+          {{ hlv.chuyenMon }}
+        </p>
+
+        <div style="font-size:18px;font-weight:800;color:var(--text-main);margin-bottom:16px;">
+          +{{ "{:,.0f}".format(hlv.giaGio) }}đ <span style="font-size:12px;color:var(--text-muted);font-weight:400;">/giờ</span>
+        </div>
+        <a href="{{ url_for('coso08.dat_lich') }}" class="btn btn-secondary btn-block btn-sm">
+          Đặt Lịch Học Kèm
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ── PANEL 3: DỤNG CỤ CHO THUÊ ────────────────────────────────────────── -->
+  <div class="tab-pane" id="panel-dichvu">
+    <div style="margin-bottom:24px;">
+      <h2 style="font-size:20px;font-weight:800;">Dụng Cụ Cho Thuê & Bán Lẻ Tại Quầy</h2>
+      <p style="font-size:13px;color:var(--text-muted);">Trang thiết bị chuyên nghiệp sẵn sàng phục vụ khi bạn đến sân</p>
+    </div>
+
+    <div class="grid-3">
+      {% for dv in danhSachDv %}
+      <div class="card card-body" style="display:flex;align-items:center;gap:16px;">
+        <div style="width:48px;height:48px;background:var(--bg-subtle);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;">
+          🏓
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:14px;margin-bottom:3px;color:var(--text-main);">{{ dv.ten }}</div>
+          <div style="font-size:15px;font-weight:800;color:var(--primary);">
+            {{ "{:,.0f}".format(dv.gia) }}đ <span style="font-size:12px;color:var(--text-muted);font-weight:400;">/ {{ dv.dvt }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

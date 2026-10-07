@@ -1,0 +1,129 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block meta_description %}Tổng hợp câu hỏi thường gặp FAQ về quy trình đặt sân, tài khoản hội viên, chính sách đổi hủy và dịch vụ tại chuỗi 10 cơ sở thể thao SportChain.{% endblock %}
+
+{% block content %}
+<div class="container section" style="max-width:880px;">
+
+  <!-- Breadcrumbs phân cấp -->
+  <div style="margin-bottom:28px;">
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:12px;">
+      <a href="/" style="color:var(--text-muted)">Trang chủ</a> 
+      <span>›</span> 
+      <span style="color:var(--text-main);font-weight:600;">Câu Hỏi Thường Gặp (FAQ)</span>
+    </div>
+
+    <div style="text-align:center;max-width:680px;margin:0 auto 36px;">
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:3px 10px;background:var(--primary-light);color:var(--primary);border-radius:var(--radius-full);font-size:11px;font-weight:700;margin-bottom:10px;">
+        💬 TRUNG TÂM TRỢ GIÚP & HỎI ĐÁP
+      </div>
+      <h1 style="font-size:32px;font-weight:800;letter-spacing:-0.5px;margin-bottom:10px;">
+        Câu Hỏi Thường Gặp (FAQ)
+      </h1>
+      <p style="color:var(--text-muted);font-size:15px;line-height:1.6;margin:0;">
+        Giải đáp tất cả các thắc mắc về tài khoản dùng chung, quy trình giữ chỗ, chính sách đổi trả ca tập và dịch vụ tiện ích trên toàn hệ thống 10 cơ sở.
+      </p>
+    </div>
+  </div>
+
+  <!-- Danh sách câu hỏi dạng Accordion -->
+  <div style="display:flex;flex-direction:column;gap:16px;">
+
+    <!-- FAQ 1 -->
+    <div class="faq-item" style="border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:#fff;box-shadow:var(--shadow-xs);">
+      <button class="faq-question" onclick="toggleFaq(this)" style="width:100%;text-align:left;padding:20px 24px;background:#fff;border:none;cursor:pointer;font-size:16px;font-weight:700;color:var(--text-main);display:flex;justify-content:space-between;align-items:center;font-family:var(--font-main);">
+        <span>1. Tôi có thể dùng một tài khoản duy nhất để đặt sân tại cả 10 cơ sở thể thao không?</span>
+        <span class="faq-arrow" style="font-size:14px;color:var(--text-muted);transition:transform 0.2s;">▼</span>
+      </button>
+      <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:var(--text-body);line-height:1.7;">
+        <strong>Chắc chắn có.</strong> Toàn bộ hệ thống SportChain sử dụng cơ sở dữ liệu và cơ chế xác thực JWT tập trung. Bạn chỉ cần đăng ký duy nhất 1 tài khoản là có thể tra cứu lịch trống, đặt sân, mượn đồ và quản lý lịch sử tập luyện tại tất cả 10 cơ sở: Bơi lội, Gym, Yoga, Cầu lông, Tennis, Bóng đá, Bóng rổ, Bóng bàn, Bắn cung và Pickleball.
+      </div>
+    </div>
+
+    <!-- FAQ 2 -->
+    <div class="faq-item" style="border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:#fff;box-shadow:var(--shadow-xs);">
+      <button class="faq-question" onclick="toggleFaq(this)" style="width:100%;text-align:left;padding:20px 24px;background:#fff;border:none;cursor:pointer;font-size:16px;font-weight:700;color:var(--text-main);display:flex;justify-content:space-between;align-items:center;font-family:var(--font-main);">
+        <span>2. Quy trình đặt chỗ trực tuyến và nhận sân tại các cơ sở diễn ra như thế nào?</span>
+        <span class="faq-arrow" style="font-size:14px;color:var(--text-muted);transition:transform 0.2s;">▼</span>
+      </button>
+      <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:var(--text-body);line-height:1.7;">
+        Quy trình được tự động hóa hoàn toàn trong 3 bước: <strong>(1)</strong> Chọn môn thể thao bạn muốn chơi, <strong>(2)</strong> Chọn sân/bàn, khung giờ và dịch vụ kèm theo (thuê vợt, bóng, HLV), <strong>(3)</strong> Hệ thống tự động xác nhận đơn và cấp <strong>Mã QR check-in</strong>. Khi đến sân, bạn đưa mã QR cho lễ tân quét là nhận sân vào chơi ngay.
+      </div>
+    </div>
+
+    <!-- FAQ 3 -->
+    <div class="faq-item" style="border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:#fff;box-shadow:var(--shadow-xs);">
+      <button class="faq-question" onclick="toggleFaq(this)" style="width:100%;text-align:left;padding:20px 24px;background:#fff;border:none;cursor:pointer;font-size:16px;font-weight:700;color:var(--text-main);display:flex;justify-content:space-between;align-items:center;font-family:var(--font-main);">
+        <span>3. Quy định về việc hủy lịch hoặc đổi khung giờ tập giữa các cơ sở ra sao?</span>
+        <span class="faq-arrow" style="font-size:14px;color:var(--text-muted);transition:transform 0.2s;">▼</span>
+      </button>
+      <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:var(--text-body);line-height:1.7;">
+        Bạn có thể truy cập trang <strong>Lịch Sử Đặt Chỗ</strong> để kiểm tra các đơn đã đăng ký. Để hủy hoặc dời ca mà không mất phí, bạn vui lòng thao tác hoặc liên hệ hotline cơ sở trước giờ bắt đầu ít nhất <strong>2 tiếng</strong> để hệ thống giải phóng khung giờ cho các hội viên khác.
+      </div>
+    </div>
+
+    <!-- FAQ 4 -->
+    <div class="faq-item" style="border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:#fff;box-shadow:var(--shadow-xs);">
+      <button class="faq-question" onclick="toggleFaq(this)" style="width:100%;text-align:left;padding:20px 24px;background:#fff;border:none;cursor:pointer;font-size:16px;font-weight:700;color:var(--text-main);display:flex;justify-content:space-between;align-items:center;font-family:var(--font-main);">
+        <span>4. Các cơ sở có hỗ trợ cho thuê dụng cụ tập luyện và trang thiết bị thi đấu không?</span>
+        <span class="faq-arrow" style="font-size:14px;color:var(--text-muted);transition:transform 0.2s;">▼</span>
+      </button>
+      <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:var(--text-body);line-height:1.7;">
+        <strong>Có đầy đủ.</strong> Mỗi cơ sở thành viên đều có quầy dịch vụ trang bị dụng cụ thi đấu đạt chuẩn (vợt cầu lông, vợt tennis, vợt bóng bàn, bóng thi đấu, kính bơi, thảm yoga...) cùng nước uống bù khoáng điện giải, tủ gửi đồ cá nhân và phòng tắm nóng lạnh phục vụ người chơi.
+      </div>
+    </div>
+
+    <!-- FAQ 5 -->
+    <div class="faq-item" style="border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:#fff;box-shadow:var(--shadow-xs);">
+      <button class="faq-question" onclick="toggleFaq(this)" style="width:100%;text-align:left;padding:20px 24px;background:#fff;border:none;cursor:pointer;font-size:16px;font-weight:700;color:var(--text-main);display:flex;justify-content:space-between;align-items:center;font-family:var(--font-main);">
+        <span>5. Tôi có thể đăng ký huấn luyện viên (HLV) kèm 1-1 tại các bộ môn thể thao không?</span>
+        <span class="faq-arrow" style="font-size:14px;color:var(--text-muted);transition:transform 0.2s;">▼</span>
+      </button>
+      <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:var(--text-body);line-height:1.7;">
+        <strong>Có.</strong> Tại các cơ sở thể thao, chúng tôi có đội ngũ Huấn luyện viên, Kiện tướng quốc gia và VĐV có chứng chỉ quốc tế. Khi đặt sân trực tuyến, bạn có thể chọn thêm dịch vụ kèm HLV riêng 1-1 với mức học phí được niêm yết công khai và minh bạch theo từng giờ.
+      </div>
+    </div>
+
+    <!-- FAQ 6 -->
+    <div class="faq-item" style="border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:#fff;box-shadow:var(--shadow-xs);">
+      <button class="faq-question" onclick="toggleFaq(this)" style="width:100%;text-align:left;padding:20px 24px;background:#fff;border:none;cursor:pointer;font-size:16px;font-weight:700;color:var(--text-main);display:flex;justify-content:space-between;align-items:center;font-family:var(--font-main);">
+        <span>6. Khung giờ cao điểm được áp dụng vào thời gian nào và tính giá ra sao?</span>
+        <span class="faq-arrow" style="font-size:14px;color:var(--text-muted);transition:transform 0.2s;">▼</span>
+      </button>
+      <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:var(--text-body);line-height:1.7;">
+        Khung giờ cao điểm thông thường từ <strong>17:00 đến 21:30</strong> các ngày trong tuần (thời điểm tan ca và buổi tối). Trong khung giờ này, giá thuê sân/bàn có thể có phụ thu nhỏ (từ 10.000đ/giờ) để đảm bảo chi phí bật đèn công suất lớn và điều hòa phục vụ thi đấu. Vào ban ngày (08:00 – 16:00), hệ thống áp dụng giá giờ vàng giảm tới 30%.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Box hỗ trợ trực tiếp -->
+  <div class="card card-body" style="margin-top:48px;background:var(--bg-subtle);border-radius:var(--radius-lg);padding:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;">
+    <div>
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:6px;">Chưa tìm thấy câu trả lời bạn cần?</h3>
+      <p style="font-size:14px;color:var(--text-muted);margin:0;">Đội ngũ hỗ trợ khách hàng của SportChain sẵn sàng giải đáp 24/7</p>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <a href="tel:02838228899" class="btn btn-secondary">📞 Hotline 028.3822.8899</a>
+      <a href="/coso/8/dat-lich" class="btn btn-primary">Đặt Sân Trực Tuyến →</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleFaq(btn) {
+  const ans = btn.nextElementSibling;
+  const arrow = btn.querySelector('.faq-arrow');
+  const isOpen = ans.style.display === 'block';
+
+  document.querySelectorAll('.faq-answer').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.faq-arrow').forEach(el => el.textContent = '▼');
+
+  if (!isOpen) {
+    ans.style.display = 'block';
+    arrow.textContent = '▲';
+  }
+}
+</script>
+{% endblock %}

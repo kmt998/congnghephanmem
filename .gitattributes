@@ -1,0 +1,11 @@
+# Ép kiểu kết thúc dòng Unix LF cho shell scripts và sql để chạy trơn tru trong container Linux / Docker
+*.sh text eol=lf
+*.sql text eol=lf
+
+# Ép kiểu kết thúc dòng tự động cho mã nguồn
+*.py text eol=auto
+*.html text eol=auto
+*.css text eol=auto
+*.js text eol=auto
+*.json text eol=auto
+*.md text eol=auto
