@@ -74,13 +74,18 @@ Mở trình duyệt truy cập: **[http://localhost:5000](http://localhost:5000)
 
 Nếu máy bạn đã cài sẵn **SQL Server cục bộ** (SQL Server Express, Developer) và **SSMS (SQL Server Management Studio)**:
 
-### Bước 1: Chạy các file SQL trong thư mục `database/`
-Mở **SSMS**, kết nối vào SQL Server của bạn và thực hiện lần lượt:
-1. Mở file `database/schema_core.sql` ➜ Nhấn **Execute** (F5).  
-   *(File sẽ tự tạo Database `TrungTamTheThao` và 8 bảng lõi nếu chưa có).*
-2. Mở file `database/seed_core.sql` ➜ Nhấn **Execute** (F5).  
-   *(File sẽ chèn 10 cơ sở mẫu và tài khoản test).*
-3. Mở các file `database/coso*.sql` (nếu có môn thể thao riêng của bạn) ➜ Nhấn **Execute** (F5).
+### Bước 1: Khởi tạo dữ liệu vào SQL Server
+- **Cách nhanh nhất (Tự động & Chuẩn tiếng Việt UTF-8):**
+  Chạy lệnh Python:
+  ```bash
+  python database/init_db.py
+  ```
+  *(Script sẽ tự tạo Database `TrungTamTheThao`, nạp 8 bảng lõi, 10 cơ sở và môn thể thao riêng với chuẩn Unicode tiếng Việt 100%, không bị lỗi font).*
+
+- **Hoặc chạy bằng SSMS:**
+  1. Mở file `database/schema_core.sql` ➜ Nhấn **Execute** (F5).
+  2. Mở file `database/seed_core.sql` ➜ Nhấn **Execute** (F5).
+  3. Mở các file `database/coso*.sql` ➜ Nhấn **Execute** (F5).
 
 ### Bước 2: Cấu hình file `.env`
 Tạo file `.env` (bằng cách copy từ `.env.example`), mở file `.env` bằng VS Code / Notepad và sửa cấu hình kết nối trỏ về SQL Server máy bạn:

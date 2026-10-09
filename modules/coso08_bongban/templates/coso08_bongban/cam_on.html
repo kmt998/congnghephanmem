@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
-{% block title %}Đặt Bàn Thành Công — Cảm Ơn Quý Khách | SportChain{% endblock %}
-{% block meta_description %}Xác nhận đặt bàn bóng bàn thành công tại Cơ sở 08 SportChain. Quét mã QR tại quầy tiếp tân để nhận bàn.{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+{% block meta_description %}Xác nhận đặt bàn bóng bàn thành công và thanh toán quét mã QR tại Cơ sở 08 SportChain.{% endblock %}
 
 {% block content %}
 <div class="container section">
@@ -12,70 +12,194 @@
       <span>›</span> 
       <a href="/coso/8" style="color:var(--text-muted)">Bóng Bàn</a>
       <span>›</span> 
-      <span style="color:var(--text-main);font-weight:600;">Xác Nhận Đặt Bàn</span>
+      <span style="color:var(--text-main);font-weight:600;">Xác Nhận & Thanh Toán QR</span>
     </div>
   </div>
 
-  <div class="card" style="max-width:640px;margin:0 auto;text-align:center;box-shadow:var(--shadow-lg);">
-    <div class="card-body" style="padding:48px 36px;">
+  <div class="card" style="max-width:760px;margin:0 auto;box-shadow:var(--shadow-lg);border-radius:var(--radius-xl);overflow:hidden;">
+    <div class="card-body" style="padding:40px 36px;">
 
-      <!-- Checkmark Icon -->
-      <div style="width:68px;height:68px;background:var(--success-light);color:var(--success);border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:32px;">
-        ✓
+      <!-- Header Thành Công -->
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="width:64px;height:64px;background:var(--success-light);color:var(--success);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 4px 12px rgba(16, 185, 129, 0.2);">
+          ✓
+        </div>
+        <h1 style="font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;color:var(--text-main);">
+          Đặt Bàn Thành Công!
+        </h1>
+        <p style="color:var(--text-muted);font-size:14px;margin:0;">
+          Mã đơn giữ chỗ: <strong style="color:var(--primary);font-size:15px;">#{{ don.datLichId }}</strong> &nbsp;|&nbsp; Check-in: <code style="font-weight:700;color:var(--primary);">{{ don.maQR }}</code>
+        </p>
       </div>
 
-      <h1 style="font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px;color:var(--text-main);">
-        Cảm Ơn Bạn Đã Đặt Bàn!
-      </h1>
-      <p style="color:var(--text-muted);font-size:15px;line-height:1.6;margin-bottom:28px;">
-        Yêu cầu giữ bàn bóng bàn của bạn đã được hệ thống ghi nhận thành công. Vui lòng lưu lại mã QR check-in bên dưới để quét khi đến cơ sở.
-      </p>
-
-      <!-- Khối tóm tắt thông tin đặt bàn -->
-      <div style="background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-md);padding:24px;text-align:left;margin-bottom:28px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:12px;">
-          <span style="font-size:13px;color:var(--text-muted);">Mã đơn giữ chỗ:</span>
-          <strong style="color:var(--primary);font-size:15px;">{{ don.maQR }}</strong>
+      <!-- Tóm tắt chi phí & thông tin đặt -->
+      <div style="background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:32px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13px;">
+          <div>
+            <span style="color:var(--text-muted);">Địa điểm:</span><br>
+            <strong style="color:var(--text-main);font-size:14px;">🏓 Cơ Sở 08 — Bóng Bàn Đỉnh Cao</strong>
+            <div style="font-size:12px;color:var(--text-muted);">45 Đinh Tiên Hoàng, Q.1, TP.HCM</div>
+          </div>
+          <div>
+            <span style="color:var(--text-muted);">Bàn chơi & Khung giờ:</span><br>
+            <strong style="color:var(--text-main);font-size:14px;">{{ don.tenBan }}</strong>
+            <div style="font-size:12px;color:var(--primary);font-weight:600;">
+              📅 {{ don.batDau.strftime('%d/%m/%Y') }} ({{ don.batDau.strftime('%H:%M') }} – {{ don.ketThuc.strftime('%H:%M') }})
+            </div>
+          </div>
         </div>
 
-        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;">
-          <span style="color:var(--text-muted);">Địa điểm chơi:</span>
-          <strong>Cơ Sở Bóng Bàn Đỉnh Cao (45 Đinh Tiên Hoàng, Q.1)</strong>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;">
-          <span style="color:var(--text-muted);">Thời gian chơi:</span>
-          <strong>{{ don.batDau.strftime('%d/%m/%Y') }} ({{ don.batDau.strftime('%H:%M') }} – {{ don.ketThuc.strftime('%H:%M') }})</strong>
-        </div>
-
-        {% if don.tenHLV %}
-        <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;">
-          <span style="color:var(--text-muted);">Huấn luyện viên:</span>
-          <strong style="color:var(--primary);">{{ don.tenHLV }}</strong>
+        {% if don.tenHLV or don.dsDichVu %}
+        <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--border);font-size:13px;display:flex;gap:16px;flex-wrap:wrap;">
+          {% if don.tenHLV %}
+            <div><span style="color:var(--text-muted);">Huấn luyện viên:</span> <strong>{{ don.tenHLV }}</strong></div>
+          {% endif %}
+          {% if don.dsDichVu %}
+            <div><span style="color:var(--text-muted);">Dịch vụ:</span> <strong>{{ don.dsDichVu | join(', ') }}</strong></div>
+          {% endif %}
         </div>
         {% endif %}
 
-        <div style="display:flex;justify-content:space-between;font-size:16px;padding-top:12px;border-top:1px solid var(--border);margin-top:12px;">
-          <span style="font-weight:700;color:var(--text-main);">Tổng chi phí thanh toán:</span>
-          <strong style="color:var(--primary);font-size:20px;">{{ "{:,.0f}".format(don.tongTien) }}đ</strong>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+          <div>
+            <span style="font-size:13px;color:var(--text-muted);">Trạng thái đơn:</span>
+            {% if don.trangThai == 'DaThanhToan' %}
+              <span class="badge badge-success" style="font-weight:700;">● ĐÃ THANH TOÁN</span>
+            {% else %}
+              <span class="badge badge-warning" style="font-weight:700;">⏳ CHỜ THANH TOÁN</span>
+            {% endif %}
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:13px;color:var(--text-muted);">Tổng thanh toán:</span>
+            <div style="font-size:22px;font-weight:900;color:var(--primary);">{{ "{:,.0f}".format(don.tongTien) }}đ</div>
+          </div>
         </div>
       </div>
 
-      <!-- Mã QR Check-in Box -->
-      <div style="padding:16px;border:1px dashed var(--border);border-radius:var(--radius-md);margin-bottom:32px;background:#fff;">
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-weight:600;">MÃ CHECK-IN NHẬN BÀN TẠI QUẦY:</div>
-        <div style="display:inline-block;padding:12px 24px;background:var(--primary-light);color:var(--primary);font-size:22px;font-weight:900;letter-spacing:2px;border-radius:var(--radius-sm);border:1px solid var(--border);">
-          {{ don.maQR }}
+      <!-- ══════════════════════════════════════════════════════════════════════════
+           PHẦN 1: QUÉT MÃ QR THANH TOÁN NGÂN HÀNG (VIETQR)
+      ══════════════════════════════════════════════════════════════════════════ -->
+      <div style="border:2px solid #BFDBFE;background:#F8FAFC;border-radius:var(--radius-xl);padding:28px 24px;margin-bottom:32px;box-shadow:0 4px 15px rgba(37,99,235,0.06);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <span style="font-size:22px;">💳</span>
+          <div>
+            <h3 style="font-size:17px;font-weight:800;color:#1E3A8A;margin:0;">
+              Thanh Toán Trực Tuyến Qua Mã VietQR
+            </h3>
+            <div style="font-size:12px;color:#64748B;">Mở ứng dụng Mobile Banking của mọi ngân hàng để quét mã thanh toán tức thì</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap;padding:12px 0;">
+          
+          <!-- Khung ảnh QR VietQR -->
+          <div style="text-align:center;background:#fff;padding:16px;border-radius:16px;border:1px solid #CBD5E1;box-shadow:0 8px 16px rgba(0,0,0,0.06);">
+            <img src="{{ vietqr_url }}" alt="Mã VietQR Thanh Toán" style="width:210px;height:210px;display:block;border-radius:8px;">
+            <div style="margin-top:10px;font-size:11px;font-weight:700;color:#2563EB;display:flex;align-items:center;justify-content:center;gap:4px;">
+              <span>⚡ VietQR Napas 247</span>
+            </div>
+          </div>
+
+          <!-- Chi tiết tài khoản ngân hàng chuyển khoản -->
+          <div style="flex:1;min-width:260px;font-size:13px;line-height:1.8;">
+            <div style="padding-bottom:10px;border-bottom:1px solid #E2E8F0;margin-bottom:10px;">
+              <span style="color:#64748B;font-size:12px;">Ngân hàng thụ hưởng:</span><br>
+              <strong style="color:#0F172A;font-size:15px;">MB Bank (Ngân Hàng Quân Đội)</strong>
+            </div>
+
+            <div style="padding-bottom:10px;border-bottom:1px solid #E2E8F0;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <span style="color:#64748B;font-size:12px;">Số tài khoản:</span><br>
+                <code style="font-size:17px;font-weight:900;color:#2563EB;letter-spacing:1px;" id="stkNumber">0868888999</code>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="copyText('0868888999', this)" style="padding:4px 10px;font-size:11px;">
+                📋 Copy
+              </button>
+            </div>
+
+            <div style="padding-bottom:10px;border-bottom:1px solid #E2E8F0;margin-bottom:10px;">
+              <span style="color:#64748B;font-size:12px;">Chủ tài khoản:</span><br>
+              <strong style="color:#0F172A;">CONG TY THE THAO SPORTCHAIN</strong>
+            </div>
+
+            <div style="padding-bottom:10px;border-bottom:1px solid #E2E8F0;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <span style="color:#64748B;font-size:12px;">Số tiền thanh toán:</span><br>
+                <strong style="font-size:17px;font-weight:900;color:#10B981;">{{ "{:,.0f}".format(don.tongTien) }}đ</strong>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <span style="color:#64748B;font-size:12px;">Nội dung chuyển khoản:</span><br>
+                <code style="font-size:14px;font-weight:800;color:#D97706;" id="ndContent">{{ ma_don_info }}</code>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="copyText('{{ ma_don_info }}', this)" style="padding:4px 10px;font-size:11px;">
+                📋 Copy
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Nút hành động xác nhận thanh toán -->
+        <div style="margin-top:20px;padding-top:16px;border-top:1px dashed #CBD5E1;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          {% if don.trangThai != 'DaThanhToan' %}
+            <form method="POST" action="/coso/8/thanh-toan/xac-nhan/{{ don.datLichId }}" style="margin:0;">
+              <input type="hidden" name="phuong_thuc" value="ChuyenKhoanVietQR">
+              <button type="submit" class="btn btn-primary" style="background:#16A34A;border-color:#16A34A;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+                ✅ Tôi Đã Chuyển Khoản Xong
+              </button>
+            </form>
+          {% else %}
+            <div style="display:inline-flex;align-items:center;gap:6px;color:#16A34A;font-weight:700;font-size:14px;">
+              <span>🎉 Đã nhận thanh toán thành công!</span>
+            </div>
+          {% endif %}
+
+          <a href="/coso/8/hoa-don/{{ don.datLichId }}" class="btn btn-secondary" style="font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+            🖨️ Xem & In Hóa Đơn Thanh Toán →
+          </a>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════════════════
+           PHẦN 2: MÃ QR CHECK-IN NHẬN BÀN TẠI QUẦY
+      ══════════════════════════════════════════════════════════════════════════ -->
+      <div style="padding:28px 24px;border:2px dashed var(--primary);border-radius:var(--radius-xl);margin-bottom:32px;background:#F8FAFC;text-align:center;">
+        <div style="font-size:14px;color:var(--text-main);font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <span>📱</span> MÃ QR CHECK-IN NHẬN BÀN TẠI QUẦY:
+        </div>
+
+        <!-- Khung ảnh QR Check-in sắc nét chuẩn 2D -->
+        <div style="display:inline-block;padding:16px;background:#fff;border:2px solid #CBD5E1;border-radius:18px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.1);margin-bottom:14px;">
+          <img src="{{ qr_checkin_url }}" alt="Mã QR Check-in Nhận Bàn" style="width:200px;height:200px;display:block;border-radius:8px;">
+          <div style="margin-top:8px;font-size:11px;font-weight:700;color:var(--primary);letter-spacing:0.5px;">
+            QUÉT ĐỂ CHECK-IN NHẬN BÀN
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;font-weight:600;">MÃ CHECK-IN VĂN BẢN (NẾU KHÔNG QUÉT ĐƯỢC QR):</div>
+          <div style="display:inline-block;padding:8px 24px;background:#EFF6FF;color:var(--primary);font-size:22px;font-weight:900;letter-spacing:2px;border-radius:8px;border:1.5px solid #BFDBFE;font-family:monospace;">
+            {{ don.maQR }}
+          </div>
+          <div style="font-size:13px;color:#64748B;margin-top:10px;font-weight:500;">
+            Quý khách chỉ cần đưa mã QR trên cho nhân viên lễ tân khi đến cơ sở để check-in nhận bàn ngay lập tức!
+          </div>
         </div>
       </div>
 
       <!-- Internal links điều hướng -->
       <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
-        <a href="{{ url_for('coso08.lich_su_dat') }}" class="btn btn-primary">
-          📋 Xem Lịch Sử Đặt Bàn Của Tôi
+        <a href="{{ url_for('coso08.hoa_don', dat_lich_id=don.datLichId) }}" class="btn btn-primary" style="font-weight:700;">
+          🖨️ In Hóa Đơn Ngay
+        </a>
+        <a href="{{ url_for('coso08.lich_su_dat') }}" class="btn btn-secondary">
+          📋 Lịch Sử Đặt Bàn Của Tôi
         </a>
         <a href="/" class="btn btn-secondary">
-          🏠 Quay Về Trang Chủ
+          🏠 Trang Chủ
         </a>
       </div>
 
@@ -83,4 +207,20 @@
   </div>
 
 </div>
+
+<script>
+function copyText(str, btn) {
+  navigator.clipboard.writeText(str).then(function() {
+    var oldText = btn.innerHTML;
+    btn.innerHTML = '✔ Đã chép!';
+    btn.style.background = '#DCFCE7';
+    btn.style.color = '#15803D';
+    setTimeout(function() {
+      btn.innerHTML = oldText;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 2000);
+  });
+}
+</script>
 {% endblock %}

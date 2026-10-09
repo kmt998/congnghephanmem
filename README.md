@@ -1,4 +1,4 @@
-# 🏟️ Hệ Thống Quản Lý Trung Tâm Thể Thao Đa Năng (Chuỗi 10 Cơ Sở)
+# 🏟️ Quản Lý Chuỗi Dịch Vụ Thể Dục Thể Thao (Chuỗi 10 Cơ Sở)
 
 > Đồ án môn học Công Nghệ Phần Mềm — Phiên bản chuẩn Quy ước chung v1.0.
 

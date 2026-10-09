@@ -32,9 +32,9 @@ fi
 
 echo "ℹ️  [db-init] Sử dụng sqlcmd tại: $SQLCMD"
 
-# Hàm thực thi lệnh sqlcmd tiện ích (tự động bật -C TrustServerCertificate)
+# Hàm thực thi lệnh sqlcmd tiện ích (tự động bật -C TrustServerCertificate và -f 65001 UTF-8)
 run_sqlcmd() {
-    "$SQLCMD" -S "$DB_SERVER" -U "$DB_USER" -P "$DB_PASSWORD" -C "$@"
+    "$SQLCMD" -S "$DB_SERVER" -U "$DB_USER" -P "$DB_PASSWORD" -C -f 65001 "$@"
 }
 
 # 2. Đợi SQL Server sẵn sàng tiếp nhận kết nối

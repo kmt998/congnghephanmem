@@ -21,6 +21,18 @@
     <p style="color:var(--text-muted);font-size:14px;">Chọn bàn, khung giờ và dịch vụ kèm theo — Hệ thống tự động xác nhận giữ chỗ tức thì</p>
   </div>
 
+  {% if current_user and current_user.VaiTro != 'HoiVien' and current_user.role != 'HoiVien' %}
+    <div class="alert alert-warning" style="margin-bottom:24px;display:flex;align-items:center;gap:14px;background:#FEF3C7;border:1px solid #FDE68A;color:#92400E;padding:14px 18px;border-radius:var(--radius-md);">
+      <span style="font-size:24px;">⚠️</span>
+      <div>
+        <strong style="display:block;font-size:14px;">
+          Bạn đang đăng nhập bằng tài khoản {{ 'Quản Trị Viên (Admin)' if (current_user.VaiTro == 'Admin' or current_user.role == 'Admin') else ('Quản Lý Cơ Sở' if (current_user.VaiTro == 'QuanLy' or current_user.role == 'QuanLy') else 'Huấn Luyện Viên') }} ({{ current_user.HoTen }})
+        </strong>
+        <span style="font-size:13px;">Theo quy định hệ thống, tài khoản quản trị/nhân sự không có quyền đặt bàn chơi thể thao. Để đặt bàn với tư cách khách hàng, vui lòng đăng nhập tài khoản <strong>Hội viên</strong> (ví dụ: <code>hoivien01</code> / mật khẩu: <code>123456</code>).</span>
+      </div>
+    </div>
+  {% endif %}
+
   <form method="POST" action="{{ url_for('coso08.dat_lich') }}">
     <div style="display:grid;grid-template-columns: 2fr 1fr;gap:32px;align-items:start;">
 
@@ -157,7 +169,7 @@
             <label class="form-label">Dụng Cụ & Dịch Vụ Phục Vụ Tại Quầy</label>
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
               {% for dv in danhSachDv %}
-              <label style="border:1px solid var(--border);background:#fff;border-radius:var(--radius-sm);padding:12px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.15s ease;">
+              <label style="border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-sm);padding:12px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.15s ease;">
                 <input type="checkbox" name="dichVuIds" value="{{ dv.dichVuId }}" data-gia="{{ dv.gia }}" class="chk-dv" onchange="tinhToanLai()" style="width:16px;height:16px;accent-color:var(--primary);">
                 <div style="font-size:13px;line-height:1.4;">
                   <strong style="color:var(--text-main);">{{ dv.ten }}</strong><br>
@@ -204,13 +216,34 @@
             </span>
           </div>
 
-          <button type="submit" class="btn btn-primary btn-block btn-lg">
-            Xác Nhận & Đặt Bàn Ngay
-          </button>
+          {% if current_user and current_user.VaiTro != 'HoiVien' and current_user.role != 'HoiVien' %}
+            <div style="background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:var(--radius-md);padding:18px 16px;text-align:center;">
+              <div style="font-size:24px;margin-bottom:6px;">⛔</div>
+              <strong style="color:#DC2626;font-size:14px;display:block;margin-bottom:6px;">
+                Tài Khoản Quản Trị Không Thể Đặt Bàn
+              </strong>
+              <p style="font-size:12px;color:#7F1D1D;line-height:1.5;margin:0 0 14px 0;">
+                Bạn đang đăng nhập với tư cách <strong>{{ current_user.VaiTro or current_user.role }}</strong>. Hệ thống chỉ cho phép tài khoản <strong>Hội viên</strong> đặt sân bãi.
+              </p>
+              {% if current_user.VaiTro == 'Admin' or current_user.role == 'Admin' %}
+                <a href="/admin" class="btn btn-secondary btn-sm" style="font-size:12px;width:100%;font-weight:700;">
+                  📊 Đến Bảng Điều Khiển Admin
+                </a>
+              {% else %}
+                <a href="/coso/8/lich-su" class="btn btn-secondary btn-sm" style="font-size:12px;width:100%;font-weight:700;">
+                  📅 Đến Trang Quản Lý Lịch Đặt
+                </a>
+              {% endif %}
+            </div>
+          {% else %}
+            <button type="submit" class="btn btn-primary btn-block btn-lg">
+              Xác Nhận & Đặt Bàn Ngay
+            </button>
 
-          <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:14px;line-height:1.5;">
-            🔒 Sau khi đặt thành công, hệ thống sẽ cấp mã QR và chuyển sang trang xác nhận.
-          </p>
+            <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:14px;line-height:1.5;">
+              🔒 Sau khi đặt thành công, hệ thống sẽ cấp mã QR và chuyển sang trang xác nhận.
+            </p>
+          {% endif %}
         </div>
       </div>
 

@@ -1,0 +1,561 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container section">
+
+  <!-- Thanh công cụ điều hướng & Nút In (Ẩn khi in ấn) -->
+  <div class="no-print" style="max-width:440px;margin:0 auto 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+    <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-muted);">
+      <a href="/" style="color:var(--text-muted)">Trang chủ</a> 
+      <span>›</span> 
+      <a href="/coso/8/lich-su" style="color:var(--text-muted)">Lịch sử</a>
+      <span>›</span> 
+      <span style="color:var(--text-main);font-weight:700;">Bill #{{ don.datLichId }}</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="badge" style="background:#EFF6FF;color:#2563EB;font-weight:700;font-size:11px;border:1px solid #BFDBFE;">
+        📏 Khổ K80 (80mm)
+      </span>
+      <button onclick="window.print()" class="btn btn-primary btn-sm" style="display:inline-flex;align-items:center;gap:5px;font-weight:700;padding:6px 14px;box-shadow:0 2px 8px rgba(37,99,235,0.3);">
+        🖨️ In Bill K80
+      </button>
+      <a href="/coso/8/lich-su" class="btn btn-secondary btn-sm" style="padding:6px 10px;">
+        ◀ Lịch Sử
+      </a>
+      <a href="/coso/8" class="btn btn-secondary btn-sm" style="padding:6px 10px;">
+        🏓 Sân 08
+      </a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════
+       KHUNG PHIẾU HÓA ĐƠN NHIỆT KHỔ K80 (RỘNG 80MM) — CƠ SỞ 08 BÓNG BÀN
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <div class="receipt-wrapper">
+    <div class="receipt-k80" id="receiptPaper">
+      
+      <!-- 1. Header Đơn Vị Phát Hành -->
+      <div class="k80-header">
+        <div style="font-size:24px;line-height:1;margin-bottom:4px;">🏓</div>
+        <div class="k80-brand-title">HỆ THỐNG THỂ THAO SPORTCHAIN</div>
+        <div class="k80-branch-name">CƠ SỞ 08 — CÂU LẠC BỘ BÓNG BÀN ĐỈNH CAO</div>
+        <div class="k80-branch-info">
+          📍 45 Đinh Tiên Hoàng, Phường Bến Nghé, Quận 1, TP.HCM<br>
+          📞 Hotline đặt sân: <strong>0988.123.456</strong><br>
+          🌐 Website: sportchain.vn &nbsp;|&nbsp; ⏰ 06:00 – 22:00
+        </div>
+      </div>
+
+      <!-- Đường nét đứt chia đoạn -->
+      <div class="k80-dash"></div>
+
+      <!-- 2. Tiêu Đề Phiếu Thu Tiền & Số HĐ -->
+      <div class="k80-title-box">
+        <h2 class="k80-title">PHIẾU THANH TOÁN</h2>
+        <div class="k80-subtitle">(Hóa đơn kiêm phiếu nhận bàn bóng bàn)</div>
+        <div class="k80-code">MÃ HĐ: <strong>HD-CS08-{{ "%05d"|format(don.datLichId) }}</strong></div>
+        
+        <div style="margin-top:6px;display:flex;justify-content:center;">
+          <span class="k80-badge {{ 'paid' if don.trangThai == 'DaThanhToan' else 'pending' }}">
+            {{ '● ĐÃ THANH TOÁN' if don.trangThai == 'DaThanhToan' else '⏳ CHỜ THANH TOÁN' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Đường nét đứt chia đoạn -->
+      <div class="k80-dash"></div>
+
+      <!-- 3. Thông Tin Khách Hàng & Ca Đặt Bàn -->
+      {% set gio_bd = don.batDau.strftime('%H:%M') if don.batDau.strftime is defined else don.batDau|string %}
+      {% set gio_kt = don.ketThuc.strftime('%H:%M') if don.ketThuc.strftime is defined else don.ketThuc|string %}
+      {% set ngay_choi = don.batDau.strftime('%d/%m/%Y') if don.batDau.strftime is defined else '' %}
+      {% set tong_gio = "{:.1f}".format((don.ketThuc - don.batDau).total_seconds() / 3600.0) if don.batDau.strftime is defined and don.ketThuc.strftime is defined else '1.0' %}
+
+      <div class="k80-row-group">
+        <div class="k80-row">
+          <span class="k80-label">Khách hàng:</span>
+          <span class="k80-val"><strong>{{ don.hoTen or 'Hội viên SportChain' }}</strong></span>
+        </div>
+        <div class="k80-row">
+          <span class="k80-label">Tài khoản:</span>
+          <span class="k80-val">{{ don.tenDangNhap or 'damson0099' }}</span>
+        </div>
+        <div class="k80-row">
+          <span class="k80-label">Bàn bóng bàn:</span>
+          <span class="k80-val"><strong>{{ don.tenBan }}</strong></span>
+        </div>
+        <div class="k80-row">
+          <span class="k80-label">Ngày chơi:</span>
+          <span class="k80-val"><strong>{{ ngay_choi }}</strong></span>
+        </div>
+        <div class="k80-row">
+          <span class="k80-label">Khung giờ:</span>
+          <span class="k80-val"><strong>{{ gio_bd }} – {{ gio_kt }} ({{ tong_gio }}h)</strong></span>
+        </div>
+        <div class="k80-row">
+          <span class="k80-label">Tiêu chuẩn:</span>
+          <span class="k80-val">Bàn ITTF tiêu chuẩn thi đấu</span>
+        </div>
+        <div class="k80-row">
+          <span class="k80-label">Thời gian in:</span>
+          <span class="k80-val">{{ don.ngayTao if don.ngayTao else (don.batDau.strftime('%d/%m/%Y %H:%M') if don.batDau.strftime is defined else don.batDau) }}</span>
+        </div>
+      </div>
+
+      <!-- Đường nét đứt chia đoạn -->
+      <div class="k80-dash"></div>
+
+      <!-- 4. Chi Tiết Dịch Vụ & Bảng Giá Dạng K80 -->
+      <div class="k80-item-header">
+        <span>TÊN DỊCH VỤ / CHI TIẾT</span>
+        <span>THÀNH TIỀN</span>
+      </div>
+
+      <div class="k80-items-list">
+        <!-- Dòng 1: Thuê bàn bóng bàn -->
+        <div class="k80-item">
+          <div class="k80-item-name">1. Thuê bàn: {{ don.tenBan }}</div>
+          <div class="k80-item-calc">
+            <span>{{ tong_gio }} giờ × {{ "{:,.0f}".format(don.giaMoiGio or 60000) }}đ/h</span>
+            <span class="k80-item-money">{{ "{:,.0f}".format(don.tienBan if don.tienBan is defined and don.tienBan else don.tongTien) }}đ</span>
+          </div>
+        </div>
+
+        <!-- Dòng 2: Huấn luyện viên kèm riêng (nếu có) -->
+        {% if don.tenHLV %}
+        <div class="k80-item">
+          <div class="k80-item-name">2. HLV kèm riêng: {{ don.tenHLV }}</div>
+          <div class="k80-item-calc">
+            <span>Kèm kỹ thuật trực tiếp suốt buổi</span>
+            <span class="k80-item-money">{{ "{:,.0f}".format(don.tienHLV) }}đ</span>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Dòng 3: Dịch vụ phụ trợ / Nước / Vợt (nếu có) -->
+        {% if don.dsDichVu %}
+        <div class="k80-item">
+          <div class="k80-item-name">{{ 3 if don.tenHLV else 2 }}. Dịch vụ tiện ích & dụng cụ</div>
+          <div class="k80-item-calc">
+            <span>{{ don.dsDichVu | join(', ') }}</span>
+            <span class="k80-item-money">{{ "{:,.0f}".format(don.tienDV or 0) }}đ</span>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Đường nét đứt đôi ngăn cách phần tổng -->
+      <div class="k80-dash-double"></div>
+
+      <!-- 5. Tổng Tiền & Thanh Toán -->
+      <div class="k80-summary">
+        <div class="k80-row">
+          <span class="k80-label">Tiền dịch vụ:</span>
+          <span class="k80-val">{{ "{:,.0f}".format(don.tongTien) }}đ</span>
+        </div>
+        <div class="k80-row">
+          <span class="k80-label">Thuế VAT (0%):</span>
+          <span class="k80-val">0đ (Đã bao gồm)</span>
+        </div>
+        <div class="k80-row k80-total-row">
+          <span class="k80-total-label">TỔNG CỘNG:</span>
+          <span class="k80-total-val">{{ "{:,.0f}".format(don.tongTien) }}đ</span>
+        </div>
+        <div class="k80-words-box">
+          <em>(Bằng chữ: {{ tong_tien_chu }})</em>
+        </div>
+        <div class="k80-row" style="margin-top:6px;">
+          <span class="k80-label">Hình thức:</span>
+          <span class="k80-val"><strong>{{ 'Chuyển khoản VietQR' if don.trangThai == 'DaThanhToan' else 'Thanh toán tại quầy' }}</strong></span>
+        </div>
+      </div>
+
+      <!-- Đường nét đứt chia đoạn -->
+      <div class="k80-dash"></div>
+
+      <!-- 6. Mã QR Check-In Tại Quầy CS 08 -->
+      <div class="k80-qr-section">
+        <div class="k80-qr-img-wrap">
+          <img src="{{ qr_hoadon_url }}" alt="QR Hóa Đơn K80" class="k80-qr-img">
+          {% if don.trangThai == 'DaThanhToan' %}
+            <div class="receipt-stamp">ĐÃ THU TIỀN</div>
+          {% endif %}
+        </div>
+        <div class="k80-qr-code-txt">Mã check-in: <code>{{ don.maQR }}</code></div>
+        <div class="k80-qr-hint">
+          Quét mã QR tại bàn lễ tân để nhận bàn bóng bàn nhanh chóng hoặc tra cứu đơn.
+        </div>
+      </div>
+
+      <!-- Đường nét đứt chia đoạn -->
+      <div class="k80-dash"></div>
+
+      <!-- 7. Footer Lời Cảm Ơn & Wifi -->
+      <div class="k80-footer">
+        <div style="font-weight:700;color:#0F172A;margin-bottom:2px;">
+          ❤️ CẢM ƠN QUÝ KHÁCH & HẸN GẶP LẠI!
+        </div>
+        <div style="font-size:11px;color:#64748B;">
+          Vui lòng có mặt trước giờ chơi 10 phút để nhận bàn.<br>
+          📶 Wifi: <strong>SportChain_BongBan08</strong> &nbsp;|&nbsp; Pass: <strong>bongban2026</strong>
+        </div>
+        <div style="font-size:10px;color:#94A3B8;margin-top:6px;letter-spacing:0.3px;">
+          CLB BÓNG BÀN ĐỈNH CAO — SPORTCHAIN NETWORK
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     STYLESHEET HÓA ĐƠN NHIỆT KHỔ K80 (80MM THERMAL RECEIPT CSS)
+══════════════════════════════════════════════════════════════════════════ -->
+<style>
+/* Khung chứa hóa đơn K80 trên màn hình */
+.receipt-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 50px;
+}
+
+/* Thân phiếu in nhiệt K80: chiều rộng 360px (~80mm trên màn hình chuẩn 96 DPI) */
+.receipt-k80 {
+  width: 100%;
+  max-width: 360px;
+  background: #ffffff;
+  padding: 24px 20px;
+  position: relative;
+  border-radius: 6px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #1E293B;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+/* Header thương hiệu */
+.k80-header {
+  text-align: center;
+  margin-bottom: 8px;
+}
+.k80-brand-title {
+  font-size: 13.5px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: #0F172A;
+  text-transform: uppercase;
+}
+.k80-branch-name {
+  font-size: 12px;
+  font-weight: 800;
+  color: #2563EB;
+  text-transform: uppercase;
+  margin: 2px 0 4px;
+}
+.k80-branch-info {
+  font-size: 11px;
+  color: #64748B;
+  line-height: 1.5;
+}
+
+/* Đường nét đứt chuẩn hóa đơn nhiệt */
+.k80-dash {
+  border-top: 1px dashed #CBD5E1;
+  margin: 12px 0;
+}
+.k80-dash-double {
+  border-top: 2px dashed #94A3B8;
+  margin: 12px 0;
+}
+
+/* Tiêu đề phiếu */
+.k80-title-box {
+  text-align: center;
+  margin-bottom: 6px;
+}
+.k80-title {
+  font-size: 17px;
+  font-weight: 900;
+  color: #0F172A;
+  margin: 0;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.k80-subtitle {
+  font-size: 11px;
+  color: #64748B;
+  font-style: italic;
+  margin: 2px 0 4px;
+}
+.k80-code {
+  font-size: 13px;
+  color: #334155;
+  letter-spacing: 0.3px;
+}
+
+/* Badge trạng thái */
+.k80-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+.k80-badge.paid {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #BBF7D0;
+}
+.k80-badge.pending {
+  background: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FDE68A;
+}
+
+/* Nhóm dòng thông tin 2 cột */
+.k80-row-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.k80-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 12px;
+  gap: 8px;
+}
+.k80-label {
+  color: #64748B;
+  flex-shrink: 0;
+}
+.k80-val {
+  color: #0F172A;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* Bảng chi tiết dịch vụ dạng K80 */
+.k80-item-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 800;
+  color: #475569;
+  text-transform: uppercase;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #E2E8F0;
+  margin-bottom: 8px;
+}
+.k80-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.k80-item-name {
+  font-weight: 700;
+  color: #0F172A;
+  font-size: 12.5px;
+  margin-bottom: 2px;
+}
+.k80-item-calc {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: #64748B;
+}
+.k80-item-money {
+  font-weight: 700;
+  color: #0F172A;
+}
+
+/* Tổng kết tiền */
+.k80-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.k80-total-row {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed #CBD5E1;
+  align-items: center;
+}
+.k80-total-label {
+  font-size: 13.5px;
+  font-weight: 900;
+  color: #0F172A;
+}
+.k80-total-val {
+  font-size: 18px;
+  font-weight: 900;
+  color: #2563EB;
+}
+.k80-words-box {
+  font-size: 11.5px;
+  color: #475569;
+  text-align: right;
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
+/* Khối QR xác thực */
+.k80-qr-section {
+  text-align: center;
+  padding: 4px 0;
+}
+.k80-qr-img-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+.k80-qr-img {
+  width: 115px;
+  height: 115px;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  padding: 4px;
+  background: #fff;
+}
+.receipt-stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  border: 2px solid #DC2626;
+  color: #DC2626;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.92);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.k80-qr-code-txt {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 2px;
+}
+.k80-qr-code-txt code {
+  background: #F1F5F9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #2563EB;
+  font-size: 12.5px;
+}
+.k80-qr-hint {
+  font-size: 10.5px;
+  color: #64748B;
+  max-width: 260px;
+  margin: 0 auto;
+  line-height: 1.35;
+}
+
+/* Chân phiếu */
+.k80-footer {
+  text-align: center;
+  line-height: 1.45;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   MEDIA PRINT: KHI NHẤN IN TRÊN MÁY IN NHIỆT KHỔ K80 (80MM THERMAL PRINTER)
+══════════════════════════════════════════════════════════════════════════ -->
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0mm;
+  }
+  
+  html, body {
+    width: 80mm !important;
+    min-width: 80mm !important;
+    max-width: 80mm !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Courier New", Courier, monospace !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .navbar, footer, .no-print, .user-menu-pill {
+    display: none !important;
+  }
+
+  .container.section {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 80mm !important;
+    width: 80mm !important;
+  }
+
+  .receipt-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  .receipt-k80 {
+    width: 80mm !important;
+    max-width: 80mm !important;
+    padding: 3mm 4mm !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    font-size: 11px !important;
+  }
+
+  .k80-dash {
+    border-top: 1px dashed #000 !important;
+    margin: 8px 0 !important;
+  }
+  .k80-dash-double {
+    border-top: 2px dashed #000 !important;
+    margin: 8px 0 !important;
+  }
+
+  .k80-brand-title, .k80-title, .k80-total-label {
+    color: #000 !important;
+  }
+  .k80-branch-name, .k80-total-val, .k80-code strong {
+    color: #000 !important;
+  }
+  .k80-label, .k80-branch-info, .k80-subtitle, .k80-item-calc, .k80-qr-hint {
+    color: #333 !important;
+  }
+
+  .k80-badge {
+    border: 1px solid #000 !important;
+    color: #000 !important;
+    background: transparent !important;
+  }
+
+  .receipt-stamp {
+    border-color: #000 !important;
+    color: #000 !important;
+    background: transparent !important;
+  }
+
+  .k80-qr-img {
+    border: 1px solid #000 !important;
+    width: 105px !important;
+    height: 105px !important;
+  }
+}
+</style>
+{% endblock %}

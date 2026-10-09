@@ -26,7 +26,12 @@
         </p>
       </div>
 
-      <div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        {% if current_user and (current_user.VaiTro in ('Admin', 'QuanLy') or current_user.role in ('Admin', 'QuanLy')) %}
+          <a href="/admin#khuyenmai" class="btn btn-secondary btn-lg" style="background:#FEF3C7;color:#D97706;border-color:#FDE68A;font-weight:700;">
+            ⚙️ Quản Lý & Chỉnh Sửa Khuyến Mãi
+          </a>
+        {% endif %}
         <a href="/dat-lich" class="btn btn-primary btn-lg" title="Đặt sân áp dụng ưu đãi">
           ⚡ Đặt Sân Dùng Mã Ngay
         </a>
@@ -36,151 +41,52 @@
 
   <!-- Danh sách Voucher & Khuyến mãi (Clean Luxury Grid) -->
   <div class="grid-3" style="margin-top:36px;">
-
-    <!-- Card 1: Chào bạn mới -->
-    <div class="card card-body" style="display:flex;flex-direction:column;justify-content:space-between;border-radius:var(--radius-lg);padding:24px;border:1.5px solid var(--border);">
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span class="badge badge-success" style="font-size:11px;">Hội Viên Mới</span>
-          <span style="font-size:12px;color:var(--text-muted);">HSD: 31/12/2026</span>
-        </div>
-        <h3 style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text-main);">
-          Giảm 20% Lần Đặt Sân Đầu Tiên
-        </h3>
-        <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;">
-          Dành riêng cho tài khoản đăng ký mới trên hệ thống. Giảm trực tiếp 20% tổng hóa đơn thuê sân/bàn tại bất kỳ cơ sở nào trong chuỗi.
-        </p>
-      </div>
-
-      <div style="background:var(--bg-subtle);padding:14px;border-radius:var(--radius-md);border:1px dashed var(--border);display:flex;justify-content:space-between;align-items:center;">
+    {% if danhSachKhuyenMai %}
+      {% for km in danhSachKhuyenMai %}
+      <div class="card card-body" style="display:flex;flex-direction:column;justify-content:space-between;border-radius:var(--radius-lg);padding:24px;border:1.5px solid var(--border);">
         <div>
-          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Mã Khuyến Mãi</div>
-          <div style="font-size:16px;font-weight:900;color:var(--primary);letter-spacing:1px;">CHAOBANMOI</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <span class="badge" style="background:#EDE9FE;color:#6D28D9;font-size:11px;font-weight:700;">
+              {{ km.badge }}
+            </span>
+            <span style="font-size:12px;color:var(--text-muted);">
+              {{ 'HSD: ' ~ km.hsd if km.hsd else 'Không giới hạn' }}
+            </span>
+          </div>
+          <h3 style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text-main);">
+            {{ km.tieuDe }}
+          </h3>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;">
+            {{ km.moTa or 'Chương trình ưu đãi giảm giá áp dụng khi đặt sân tại hệ thống SportChain.' }}
+          </p>
+          <div style="margin-bottom:14px;display:flex;align-items:center;gap:8px;font-size:12px;flex-wrap:wrap;">
+            <span class="badge badge-success" style="font-size:11px;">Giảm {{ km.giamPhanTram }}%</span>
+            {% if km.giamToiDa and km.giamToiDa > 0 %}
+              <span style="color:var(--text-muted);">Tối đa {{ "{:,.0f}".format(km.giamToiDa) }}đ</span>
+            {% endif %}
+            <span style="color:var(--primary);font-weight:600;margin-left:auto;font-size:11px;">
+              {% if km.coSoId %}CS {{ "%02d"|format(km.coSoId) }}{% else %}🌐 Toàn Chuỗi{% endif %}
+            </span>
+          </div>
         </div>
-        <button class="btn btn-secondary btn-sm" onclick="copyCode('CHAOBANMOI', this)">Sao chép</button>
-      </div>
-    </div>
 
-    <!-- Card 2: Khung giờ vàng -->
-    <div class="card card-body" style="display:flex;flex-direction:column;justify-content:space-between;border-radius:var(--radius-lg);padding:24px;border:1.5px solid var(--border);">
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span class="badge badge-info" style="font-size:11px;">Giờ Vàng Giá Sốc</span>
-          <span style="font-size:12px;color:var(--text-muted);">T2 – T6 hàng tuần</span>
+        <div style="background:var(--bg-subtle);padding:14px;border-radius:var(--radius-md);border:1px dashed var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Mã Khuyến Mãi</div>
+            <div style="font-size:16px;font-weight:900;color:var(--primary);letter-spacing:1px;font-family:monospace;">{{ km.code }}</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="copyCode('{{ km.code }}', this)">Sao chép</button>
         </div>
-        <h3 style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text-main);">
-          Giảm 30% Khung Giờ Ban Ngày
-        </h3>
-        <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;">
-          Áp dụng cho các ca tập từ 08:00 đến 16:00 các ngày trong tuần. Giá thuê bàn bóng bàn chỉ còn từ 35.000đ/giờ, tự động giảm khi thanh toán.
-        </p>
       </div>
-
-      <div style="background:var(--bg-subtle);padding:14px;border-radius:var(--radius-md);border:1px dashed var(--border);display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Áp Dụng Tự Động</div>
-          <div style="font-size:16px;font-weight:900;color:var(--primary);letter-spacing:1px;">GIOVANG30</div>
-        </div>
-        <a href="/dat-lich" class="btn btn-primary btn-sm">Đặt Giờ Này</a>
+      {% endfor %}
+    {% else %}
+      <div style="grid-column:1/-1;text-align:center;padding:48px;background:var(--bg-subtle);border-radius:var(--radius-lg);">
+        <div style="font-size:40px;margin-bottom:12px;">🎁</div>
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;">Hiện tại chưa có chương trình ưu đãi nào mới</h3>
+        <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px;">Vui lòng quay lại sau hoặc liên hệ ban quản lý chuỗi để biết thêm chi tiết.</p>
+        <a href="/dat-lich" class="btn btn-primary">Đặt Sân Thể Thao Ngay</a>
       </div>
-    </div>
-
-    <!-- Card 3: Combo Dụng Cụ -->
-    <div class="card card-body" style="display:flex;flex-direction:column;justify-content:space-between;border-radius:var(--radius-lg);padding:24px;border:1.5px solid var(--border);">
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span class="badge" style="background:#EDE9FE;color:#6D28D9;font-size:11px;font-weight:700;">Combo Tiết Kiệm</span>
-          <span style="font-size:12px;color:var(--text-muted);">Áp dụng liên tục</span>
-        </div>
-        <h3 style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text-main);">
-          Đặt Từ 2 Giờ — Mượn Dụng Cụ 0Đ
-        </h3>
-        <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;">
-          Khi đặt sân hoặc bàn chơi từ 2 giờ trở lên, quý khách được mượn miễn phí 2 vợt thi đấu cao cấp và 1 hộp bóng tiêu chuẩn tại quầy tiếp tân.
-        </p>
-      </div>
-
-      <div style="background:var(--bg-subtle);padding:14px;border-radius:var(--radius-md);border:1px dashed var(--border);display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Mã Khuyến Mãi</div>
-          <div style="font-size:16px;font-weight:900;color:var(--primary);letter-spacing:1px;">COMBODUNGCU</div>
-        </div>
-        <button class="btn btn-secondary btn-sm" onclick="copyCode('COMBODUNGCU', this)">Sao chép</button>
-      </div>
-    </div>
-
-    <!-- Card 4: Gói HLV 1-1 -->
-    <div class="card card-body" style="display:flex;flex-direction:column;justify-content:space-between;border-radius:var(--radius-lg);padding:24px;border:1.5px solid var(--border);">
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span class="badge badge-info" style="font-size:11px;">Đào Tạo Kèm 1-1</span>
-          <span style="font-size:12px;color:var(--text-muted);">Không giới hạn</span>
-        </div>
-        <h3 style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text-main);">
-          Khóa Kèm HLV 5 Buổi Tặng 1
-        </h3>
-        <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;">
-          Đăng ký lộ trình 5 buổi học kèm Huấn luyện viên (chỉnh sửa dáng đánh, kỹ thuật giật bóng, giao bóng) được tặng thêm 1 buổi tập chiến thuật hoàn toàn miễn phí.
-        </p>
-      </div>
-
-      <div style="background:var(--bg-subtle);padding:14px;border-radius:var(--radius-md);border:1px dashed var(--border);display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Mã Khuyến Mãi</div>
-          <div style="font-size:16px;font-weight:900;color:var(--primary);letter-spacing:1px;">HLVPRO5</div>
-        </div>
-        <button class="btn btn-secondary btn-sm" onclick="copyCode('HLVPRO5', this)">Sao chép</button>
-      </div>
-    </div>
-
-    <!-- Card 5: Thẻ SportPass VIP -->
-    <div class="card card-body" style="display:flex;flex-direction:column;justify-content:space-between;border-radius:var(--radius-lg);padding:24px;border:1.5px solid var(--border);">
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span class="badge" style="background:#FEE2E2;color:#991B1B;font-size:11px;font-weight:700;">Hội Viên Toàn Chuỗi</span>
-          <span style="font-size:12px;color:var(--text-muted);">Gói tháng & quý</span>
-        </div>
-        <h3 style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text-main);">
-          Thẻ SportPass Đa Năng 10 Môn
-        </h3>
-        <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;">
-          Chỉ cần 1 thẻ duy nhất tập luyện linh hoạt tại cả 10 cơ sở: Bơi lội, Gym, Bóng bàn, Cầu lông, Tennis... Giảm thêm 10% các dịch vụ quầy và ưu tiên giữ chỗ trước 7 ngày.
-        </p>
-      </div>
-
-      <div style="background:var(--bg-subtle);padding:14px;border-radius:var(--radius-md);border:1px dashed var(--border);display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Mã Khuyến Mãi</div>
-          <div style="font-size:16px;font-weight:900;color:var(--primary);letter-spacing:1px;">SPORTPASS</div>
-        </div>
-        <button class="btn btn-secondary btn-sm" onclick="copyCode('SPORTPASS', this)">Sao chép</button>
-      </div>
-    </div>
-
-    <!-- Card 6: Đặt cố định CLB -->
-    <div class="card card-body" style="display:flex;flex-direction:column;justify-content:space-between;border-radius:var(--radius-lg);padding:24px;border:1.5px solid var(--border);">
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span class="badge badge-info" style="font-size:11px;">Nhóm & Doanh Nghiệp</span>
-          <span style="font-size:12px;color:var(--text-muted);">Hợp đồng tháng</span>
-        </div>
-        <h3 style="font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text-main);">
-          Đặt Lịch Cố Định Hàng Tuần Giảm 15%
-        </h3>
-        <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;">
-          Dành cho các câu lạc bộ thể thao, hội nhóm và giải đấu phong trào công ty đặt sân định kỳ theo tháng. Đảm bảo 100% giữ nguyên khung giờ thi đấu yêu thích.
-        </p>
-      </div>
-
-      <div style="background:var(--bg-subtle);padding:14px;border-radius:var(--radius-md);border:1px dashed var(--border);display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Mã Khuyến Mãi</div>
-          <div style="font-size:16px;font-weight:900;color:var(--primary);letter-spacing:1px;">TEAMPLAY15</div>
-        </div>
-        <button class="btn btn-secondary btn-sm" onclick="copyCode('TEAMPLAY15', this)">Sao chép</button>
-      </div>
-    </div>
-
+    {% endif %}
   </div>
 
   <!-- Hướng dẫn sử dụng Voucher -->

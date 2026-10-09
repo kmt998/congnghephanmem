@@ -10,7 +10,7 @@ import pyodbc
 
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    load_dotenv(override=True)
 except Exception:
     pass
 
@@ -43,10 +43,10 @@ def _build_conn_str() -> str:
 
 
 def is_db_available() -> bool:
-    """Kiểm tra xem SQL Server có đang online không (cache kết quả để phản hồi tức thì)."""
+    """Kiểm tra xem SQL Server có đang online không."""
     global _DB_AVAILABLE
-    if _DB_AVAILABLE is not None:
-        return _DB_AVAILABLE
+    if _DB_AVAILABLE is True:
+        return True
     try:
         conn = pyodbc.connect(_build_conn_str(), autocommit=False)
         conn.close()

@@ -34,7 +34,7 @@ def login():
             return redirect(next_url or url_for("trang_chu"))
         flash(f"❌ {kq['error']}", "danger")
 
-    return render_template("auth/login.html", title="Đăng Nhập — Trung Tâm Thể Thao")
+    return render_template("auth/login.html", title="Đăng Nhập — Quản Lý Chuỗi Dịch Vụ Thể Dục Thể Thao")
 
 
 @auth_bp.route("/dang-ky", methods=["GET", "POST"])
@@ -60,7 +60,7 @@ def register():
                 return redirect(url_for("auth.login"))
             flash(f"❌ {kq['error']}", "danger")
 
-    return render_template("auth/register.html", title="Đăng Ký Hội Viên — Trung Tâm Thể Thao")
+    return render_template("auth/register.html", title="Đăng Ký Hội Viên — Quản Lý Chuỗi Dịch Vụ Thể Dục Thể Thao")
 
 
 @auth_bp.route("/dang-xuat")

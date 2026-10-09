@@ -1,0 +1,490 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container section">
+
+  <!-- Breadcrumbs -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);">
+      <a href="/" style="color:var(--text-muted)">Trang chủ</a> 
+      <span>›</span> 
+      <a href="/admin" style="color:var(--text-muted)">Bảng Quản Trị</a>
+      <span>›</span> 
+      <span style="color:var(--text-main);font-weight:700;">Trạm Nhận Diện & Check-in Mã QR</span>
+    </div>
+
+    <div>
+      <a href="/admin" class="btn btn-secondary btn-sm" style="font-weight:700;">
+        ← Quay Lại Bảng Quản Trị
+      </a>
+    </div>
+  </div>
+
+  <!-- Header Banner Trạm Check-in -->
+  <div style="background:linear-gradient(135deg, #1E293B 0%, #0F172A 100%);color:#fff;padding:24px 28px;border-radius:var(--radius-xl);margin-bottom:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;box-shadow:var(--shadow-md);">
+    <div>
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(59,130,246,0.25);color:#60A5FA;border-radius:var(--radius-full);font-size:11px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">
+        BỘ NHẬN DIỆN QUẦY LỄ TÂN
+      </div>
+      <h1 style="font-size:24px;font-weight:800;letter-spacing:-0.5px;margin:0 0 6px 0;color:#fff;">
+        Trạm Nhận Diện & Check-in Mã QR Đơn Đặt Sân
+      </h1>
+      <p style="color:#94A3B8;font-size:13.5px;margin:0;max-width:700px;line-height:1.5;">
+        Hệ thống tự động nhận diện mã QR từ hóa đơn in K80, mã trên điện thoại của khách, hoặc súng quét mã vạch 2D tại quầy lễ tân để duyệt vào sân tức thì.
+      </p>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="background:rgba(255,255,255,0.08);padding:10px 16px;border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.12);text-align:center;">
+        <div style="font-size:10.5px;color:#94A3B8;text-transform:uppercase;font-weight:700;">Tốc Độ Quét</div>
+        <div style="font-size:16px;font-weight:900;color:#34D399;margin-top:2px;">&lt; 0.2 Giây</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Khu Vực Chính: 2 Cột (Cột Trái: Quét & Nhập | Cột Phải: Thẻ Đơn Xác Nhận) -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;" class="checkin-grid">
+
+    <!-- ── CỘT 1: CÔNG CỤ NHẬN DIỆN MÃ (CAMERA & MÁY QUÉT) ───────────────── -->
+    <div class="card" style="padding:24px;border-radius:var(--radius-lg);box-shadow:var(--shadow-xs);">
+      
+      <!-- Chuyển Đổi Phương Thức: Camera / Nhập Phím -->
+      <div style="display:flex;gap:8px;background:var(--bg-subtle);padding:4px;border-radius:var(--radius-md);margin-bottom:20px;">
+        <button type="button" id="btnModeInput" onclick="doiCheDo('input')" class="btn btn-sm" style="flex:1;font-weight:700;border:none;background:var(--bg-card);color:var(--primary);box-shadow:var(--shadow-xs);">
+          Nhập Mã / Máy Quét Cầm Tay
+        </button>
+        <button type="button" id="btnModeCamera" onclick="doiCheDo('camera')" class="btn btn-sm" style="flex:1;font-weight:700;border:none;background:transparent;color:var(--text-muted);">
+          Quét Bằng Camera
+        </button>
+      </div>
+
+      <!-- 1. CHẾ ĐỘ 1: NHẬP PHÍM / SÚNG BẮN MÃ VẠCH (MẶC ĐỊNH SẴN SÀNG) -->
+      <div id="viewInputMode">
+        <form onsubmit="traCuuMa(event)" style="margin-bottom:16px;">
+          <label style="display:block;font-size:13px;font-weight:700;color:var(--text-main);margin-bottom:8px;">
+            Mã Đơn / Mã QR Check-in:
+          </label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="inputMaCheckin" class="form-control" 
+                   placeholder="Nhập mã đơn (VD: 11), mã QR (BB-...), hoặc bấm máy quét..."
+                   style="font-size:15px;font-weight:600;min-height:48px;" autofocus autocomplete="off" />
+            <button type="submit" class="btn btn-primary" style="min-height:48px;padding:0 20px;font-weight:700;white-space:nowrap;">
+              Nhận Diện
+            </button>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin:8px 0 0 0;">
+            💡 <em>Mẹo:</em> Khi cắm máy quét Barcode/QR 2D USB tại quầy, chỉ cần hướng đầu đọc vào mã là hệ thống tự điền và nhận diện ngay lập tức.
+          </p>
+        </form>
+
+        <!-- Phím tắt thử nghiệm nhanh -->
+        <div style="background:var(--bg-subtle);padding:12px 14px;border-radius:var(--radius-md);margin-top:16px;border:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;">
+            Dữ liệu mẫu thử nghiệm nhanh:
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <button type="button" class="btn btn-secondary btn-sm" style="font-size:11.5px;padding:4px 10px;" onclick="dienMaNhanh('11')">
+              Đơn #11
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" style="font-size:11.5px;padding:4px 10px;" onclick="dienMaNhanh('SPORTCHAIN-HD-11-BB202610091234')">
+              Hóa Đơn K80 #11
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" style="font-size:11.5px;padding:4px 10px;" onclick="dienMaNhanh('BB202610091234')">
+              Mã Check-in CS 08
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. CHẾ ĐỘ 2: QUÉT BẰNG CAMERA / WEBCAM -->
+      <div id="viewCameraMode" style="display:none;">
+        <div style="background:var(--bg-subtle);border:2px dashed var(--border);border-radius:var(--radius-lg);padding:16px;text-align:center;position:relative;overflow:hidden;">
+          <div id="reader" style="width:100%;max-width:380px;margin:0 auto;border-radius:var(--radius-md);overflow:hidden;"></div>
+          <div id="cameraStatus" style="font-size:13px;color:var(--text-muted);margin-top:10px;">
+            Đang chuẩn bị camera... Đưa mã QR vào khung hình.
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="khoiDongCamera()">
+            🔄 Khởi Động Lại Camera
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="dungCamera()">
+            ⏹️ Tắt Camera
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── CỘT 2: THẺ KẾT QUẢ XÁC NHẬN ĐƠN (VERIFICATION PASS) ────────────── -->
+    <div id="resultCardWrap">
+      
+      <!-- Trạng thái chờ quét ban đầu -->
+      <div id="boxWaiting" class="card" style="padding:48px 24px;border-radius:var(--radius-lg);text-align:center;border:2px dashed var(--border);box-shadow:none;">
+        <div style="width:64px;height:64px;background:var(--bg-subtle);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px;">
+          🎯
+        </div>
+        <h3 style="font-size:18px;font-weight:800;color:var(--text-main);margin-bottom:6px;">
+          Sẵn Sàng Nhận Diện Mã Đơn
+        </h3>
+        <p style="font-size:13.5px;color:var(--text-muted);max-width:360px;margin:0 auto;line-height:1.5;">
+          Quét mã QR từ hóa đơn hoặc nhập mã đơn đặt ở khung bên trái để xem chi tiết khách hàng và thực hiện check-in vào sân.
+        </p>
+      </div>
+
+      <!-- Trạng thái đang tải nhận diện -->
+      <div id="boxLoading" class="card" style="display:none;padding:48px 24px;border-radius:var(--radius-lg);text-align:center;">
+        <div style="font-size:32px;animation:spin 1s infinite linear;display:inline-block;margin-bottom:12px;">⏳</div>
+        <h3 style="font-size:17px;font-weight:700;">Đang tra cứu dữ liệu đơn đặt...</h3>
+      </div>
+
+      <!-- Trạng thái THẤT BẠI: Không tìm thấy mã -->
+      <div id="boxError" class="card" style="display:none;padding:24px;border-radius:var(--radius-lg);border-left:4px solid var(--danger);background:var(--danger-light);">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <span style="font-size:24px;">❌</span>
+          <div style="flex:1;">
+            <div style="font-weight:800;color:var(--danger);font-size:15px;margin-bottom:4px;">
+              Nhận Diện Thất Bại!
+            </div>
+            <div id="errorMsg" style="font-size:13.5px;color:var(--danger);">
+              Không tìm thấy đơn đặt nào khớp với mã này.
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="resetCheckin()" style="margin-top:12px;font-size:12px;">
+              🔄 Thử quét lại
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trạng thái THÀNH CÔNG: Hiển thị Thẻ Chi Tiết Đơn Đặt -->
+      <div id="boxSuccess" class="card" style="display:none;padding:24px;border-radius:var(--radius-lg);border-top:5px solid var(--success);box-shadow:var(--shadow-md);position:relative;">
+        
+        <!-- Header Thẻ -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:16px;">
+          <div>
+            <div style="font-size:11px;font-weight:800;color:var(--success);text-transform:uppercase;letter-spacing:0.5px;">
+              ● ĐÃ NHẬN DIỆN THÀNH CÔNG
+            </div>
+            <h2 id="resMaDon" style="font-size:22px;font-weight:900;color:var(--text-main);margin:4px 0 0 0;">
+              Đơn Đặt #11
+            </h2>
+          </div>
+          <div id="resBadgeTrangThai" style="white-space:nowrap;">
+            <!-- Badge trạng thái được điền bằng JS -->
+          </div>
+        </div>
+
+        <!-- Lưới Chi Tiết Thông Tin Khách & Sân -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:13px;margin-bottom:20px;">
+          <div style="background:var(--bg-subtle);padding:10px 14px;border-radius:var(--radius-md);">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Khách Hàng</div>
+            <div id="resKhachHang" style="font-size:14px;font-weight:800;color:var(--text-main);margin-top:2px;">—</div>
+            <div id="resEmail" style="font-size:11.5px;color:var(--text-muted);">—</div>
+          </div>
+
+          <div style="background:var(--bg-subtle);padding:10px 14px;border-radius:var(--radius-md);">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Cơ Sở & Môn</div>
+            <div id="resCoSo" style="font-size:14px;font-weight:800;color:var(--primary);margin-top:2px;">—</div>
+            <div id="resMon" style="font-size:11.5px;color:var(--text-muted);">—</div>
+          </div>
+
+          <div style="background:var(--bg-subtle);padding:10px 14px;border-radius:var(--radius-md);">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Sân / Bàn Chỉ Định</div>
+            <div id="resTenBan" style="font-size:14px;font-weight:800;color:var(--text-main);margin-top:2px;">—</div>
+          </div>
+
+          <div style="background:var(--bg-subtle);padding:10px 14px;border-radius:var(--radius-md);">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Ca Giờ Tập Luyện</div>
+            <div id="resGioChoi" style="font-size:14px;font-weight:800;color:var(--text-main);margin-top:2px;">—</div>
+            <div id="resNgayDat" style="font-size:11.5px;color:var(--text-muted);">—</div>
+          </div>
+        </div>
+
+        <!-- Tổng Tiền & Hóa Đơn -->
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg-subtle);border-radius:var(--radius-md);margin-bottom:20px;border:1px solid var(--border);">
+          <span style="font-size:13px;font-weight:700;color:var(--text-muted);">TỔNG THANH TOÁN:</span>
+          <span id="resTongTien" style="font-size:20px;font-weight:900;color:var(--primary);">0đ</span>
+        </div>
+
+        <!-- BỘ NÚT HÀNH ĐỘNG CHECK-IN (1 CHẠM) -->
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          
+          <!-- Nút Check-in Vào Sân -->
+          <button type="button" id="btnActionCheckin" class="btn btn-primary" onclick="xacNhanCheckin('DaXacNhan')" style="min-height:48px;font-size:15px;font-weight:800;width:100%;">
+            Xác Nhận Check-in & Cho Vào Sân
+          </button>
+
+          <!-- Nút Thu Tiền Tại Quầy (Nếu chưa thanh toán) -->
+          <button type="button" id="btnActionThuTien" class="btn btn-success" onclick="xacNhanCheckin('DaThanhToan')" style="min-height:48px;font-size:15px;font-weight:800;width:100%;display:none;">
+            Thu Tiền Tại Quầy & Check-in
+          </button>
+
+          <div style="display:flex;gap:10px;">
+            <!-- Nút Mở Hóa Đơn In K80 -->
+            <a id="btnInHoaDon" href="#" target="_blank" class="btn btn-secondary" style="flex:1;min-height:44px;font-size:13px;font-weight:700;">
+              In Phiếu K80
+            </a>
+
+            <!-- Nút Quét Tiếp -->
+            <button type="button" class="btn btn-secondary" onclick="resetCheckin()" style="flex:1;min-height:44px;font-size:13px;font-weight:700;">
+              Quét Khách Khác
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Thư viện quét mã QR Camera qua CDN -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<script>
+var currentBookingId = null;
+var html5QrCode = null;
+var isCameraRunning = false;
+
+// 1. Chuyển đổi qua lại giữa Chế độ Nhập/Máy quét & Camera
+function doiCheDo(mode) {
+  var viewInput = document.getElementById('viewInputMode');
+  var viewCamera = document.getElementById('viewCameraMode');
+  var btnInput = document.getElementById('btnModeInput');
+  var btnCamera = document.getElementById('btnModeCamera');
+
+  if (mode === 'camera') {
+    viewInput.style.display = 'none';
+    viewCamera.style.display = 'block';
+    btnCamera.style.background = 'var(--bg-card)';
+    btnCamera.style.color = 'var(--primary)';
+    btnCamera.style.boxShadow = 'var(--shadow-xs)';
+    btnInput.style.background = 'transparent';
+    btnInput.style.color = 'var(--text-muted)';
+    btnInput.style.boxShadow = 'none';
+    khoiDongCamera();
+  } else {
+    viewInput.style.display = 'block';
+    viewCamera.style.display = 'none';
+    btnInput.style.background = 'var(--bg-card)';
+    btnInput.style.color = 'var(--primary)';
+    btnInput.style.boxShadow = 'var(--shadow-xs)';
+    btnCamera.style.background = 'transparent';
+    btnCamera.style.color = 'var(--text-muted)';
+    btnCamera.style.boxShadow = 'none';
+    dungCamera();
+    setTimeout(function() {
+      document.getElementById('inputMaCheckin').focus();
+    }, 100);
+  }
+}
+
+// 2. Điền mã nhanh để test
+function dienMaNhanh(code) {
+  document.getElementById('inputMaCheckin').value = code;
+  thucHienTraCuu(code);
+}
+
+// 3. Form submit tra cứu
+function traCuuMa(e) {
+  if (e) e.preventDefault();
+  var code = document.getElementById('inputMaCheckin').value.trim();
+  if (!code) {
+    alert('Vui lòng nhập hoặc quét mã đơn!');
+    return;
+  }
+  thucHienTraCuu(code);
+}
+
+// 4. Phát âm thanh Beep khi quét thành công
+function phatTiengBeep() {
+  try {
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 1200; // 1.2kHz beep
+    gain.gain.value = 0.15;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    setTimeout(function() {
+      osc.stop();
+    }, 120);
+  } catch(e) {}
+}
+
+// 5. Gửi request tra cứu đến backend
+function thucHienTraCuu(code) {
+  hienThiHop('loading');
+
+  fetch('/api/checkin/tra-cuu', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: code })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.ok && data.don) {
+      phatTiengBeep();
+      hienThiDonThanhCong(data.don);
+    } else {
+      hienThiLoi(data.msg || 'Không tìm thấy đơn đặt này!');
+    }
+  })
+  .catch(function(err) {
+    hienThiLoi('Lỗi kết nối máy chủ: ' + err);
+  });
+}
+
+// 6. Hiển thị thông tin đơn lên Card
+function hienThiDonThanhCong(don) {
+  currentBookingId = don.datLichId;
+
+  document.getElementById('resMaDon').innerText = 'Đơn Đặt #' + don.datLichId + ' (' + don.maQR + ')';
+  document.getElementById('resKhachHang').innerText = don.hoTen || 'Khách vãng lai';
+  document.getElementById('resEmail').innerText = (don.tenDangNhap ? '@' + don.tenDangNhap + ' • ' : '') + (don.email || '');
+  document.getElementById('resCoSo').innerText = don.tenCoSo;
+  document.getElementById('resMon').innerText = 'Môn: ' + don.monTheThao;
+  document.getElementById('resTenBan').innerText = don.tenBan;
+  document.getElementById('resGioChoi').innerText = don.gioChoi;
+  document.getElementById('resNgayDat').innerText = don.batDau;
+  document.getElementById('resTongTien').innerText = don.tongTienFmt;
+  document.getElementById('btnInHoaDon').href = don.hoaDonUrl;
+
+  // Badge trạng thái & nút tương ứng
+  var badgeWrap = document.getElementById('resBadgeTrangThai');
+  var btnCheckin = document.getElementById('btnActionCheckin');
+  var btnThuTien = document.getElementById('btnActionThuTien');
+
+  if (don.trangThai === 'DaThanhToan' || don.trangThai === 'DaXacNhan') {
+    badgeWrap.innerHTML = '<span class="badge badge-success" style="font-size:12px;padding:6px 12px;">' + don.trangThaiText + '</span>';
+    btnThuTien.style.display = 'none';
+    btnCheckin.style.display = 'block';
+    btnCheckin.innerText = 'Xác Nhận Cho Vào Sân (Check-in)';
+  } else if (don.trangThai === 'ChoThanhToan') {
+    badgeWrap.innerHTML = '<span class="badge badge-warning" style="font-size:12px;padding:6px 12px;">' + don.trangThaiText + '</span>';
+    btnThuTien.style.display = 'block';
+    btnCheckin.style.display = 'none';
+  } else if (don.trangThai === 'HoanThanh') {
+    badgeWrap.innerHTML = '<span class="badge" style="background:#F1F5F9;color:#64748B;font-size:12px;padding:6px 12px;">Đã hoàn thành</span>';
+    btnCheckin.style.display = 'none';
+    btnThuTien.style.display = 'none';
+  } else {
+    badgeWrap.innerHTML = '<span class="badge badge-danger" style="font-size:12px;padding:6px 12px;">' + don.trangThaiText + '</span>';
+    btnCheckin.style.display = 'none';
+    btnThuTien.style.display = 'none';
+  }
+
+  hienThiHop('success');
+}
+
+// 7. Xác nhận check-in (Gửi AJAX cập nhật trạng thái)
+function xacNhanCheckin(trangThaiMoi) {
+  if (!currentBookingId) return;
+
+  fetch('/api/checkin/xac-nhan', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ datLichId: currentBookingId, trangThai: trangThaiMoi })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.ok) {
+      alert(data.msg);
+      // Nạp lại thông tin đơn
+      thucHienTraCuu(currentBookingId.toString());
+    } else {
+      alert('❌ Lỗi: ' + data.msg);
+    }
+  })
+  .catch(function(err) {
+    alert('❌ Lỗi: ' + err);
+  });
+}
+
+// 8. Quản lý trạng thái các Box bên phải
+function hienThiHop(type) {
+  document.getElementById('boxWaiting').style.display = (type === 'waiting') ? 'block' : 'none';
+  document.getElementById('boxLoading').style.display = (type === 'loading') ? 'block' : 'none';
+  document.getElementById('boxError').style.display   = (type === 'error')   ? 'block' : 'none';
+  document.getElementById('boxSuccess').style.display = (type === 'success') ? 'block' : 'none';
+}
+
+function hienThiLoi(msg) {
+  document.getElementById('errorMsg').innerText = msg;
+  hienThiHop('error');
+}
+
+function resetCheckin() {
+  currentBookingId = null;
+  document.getElementById('inputMaCheckin').value = '';
+  hienThiHop('waiting');
+  document.getElementById('inputMaCheckin').focus();
+}
+
+// 9. Quét Camera với html5-qrcode
+function khoiDongCamera() {
+  if (typeof Html5Qrcode === 'undefined') {
+    document.getElementById('cameraStatus').innerText = 'Chưa tải được thư viện Camera. Vui lòng dùng chế độ nhập mã!';
+    return;
+  }
+
+  dungCamera(); // Dừng camera cũ nếu đang chạy
+
+  html5QrCode = new Html5Qrcode("reader");
+  var config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+  html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
+  .then(function() {
+    isCameraRunning = true;
+    document.getElementById('cameraStatus').innerText = '🟢 Camera đang hoạt động. Hãy hướng vào mã QR của khách!';
+  })
+  .catch(function(err) {
+    document.getElementById('cameraStatus').innerText = '⚠️ Không thể mở camera (Cần cấp quyền camera hoặc dùng chế độ nhập mã phím): ' + err;
+  });
+}
+
+function onScanSuccess(decodedText) {
+  dungCamera();
+  thucHienTraCuu(decodedText);
+}
+
+function dungCamera() {
+  if (html5QrCode && isCameraRunning) {
+    html5QrCode.stop().then(function() {
+      isCameraRunning = false;
+      document.getElementById('cameraStatus').innerText = 'Camera đã tắt.';
+    }).catch(function(e) {});
+  }
+}
+
+// Dọn dẹp camera khi rời trang
+window.addEventListener('beforeunload', function() {
+  dungCamera();
+});
+
+// Tự động tra cứu nếu có tham số ?code=... trên URL
+document.addEventListener('DOMContentLoaded', function() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var codeParam = urlParams.get('code');
+  if (codeParam) {
+    document.getElementById('inputMaCheckin').value = codeParam;
+    thucHienTraCuu(codeParam);
+  }
+});
+</script>
+
+<style>
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@media (max-width: 900px) {
+  .checkin-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
+{% endblock %}

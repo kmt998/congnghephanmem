@@ -50,6 +50,15 @@
         Danh sách 10 môn thể thao thành viên
       </div>
     </div>
+
+    {% if current_user and current_user.VaiTro != 'HoiVien' and current_user.role != 'HoiVien' %}
+      <div class="alert alert-warning" style="margin-top:20px;display:flex;align-items:center;gap:14px;background:#FEF3C7;border:1px solid #FDE68A;color:#92400E;padding:12px 18px;border-radius:var(--radius-md);">
+        <span style="font-size:22px;">ℹ️</span>
+        <div style="font-size:13px;">
+          <strong>Lưu ý nghiệp vụ:</strong> Bạn đang đăng nhập với quyền <strong>{{ current_user.VaiTro or current_user.role }}</strong> ({{ current_user.HoTen }}). Chức năng đặt sân trực tuyến này chỉ phục vụ cho khách hàng/hội viên.
+        </div>
+      </div>
+    {% endif %}
   </div>
 
   <!-- Lưới chọn 10 cơ sở thể thao -->
@@ -88,7 +97,7 @@
 </div>
 
 <!-- Modal thông báo khi chọn cơ sở đang chờ đồng bộ -->
-<div id="modal-coso" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;">
+<div id="modal-coso" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.65);z-index:999;align-items:center;justify-content:center;">
   <div class="card card-body" style="max-width:480px;width:90%;padding:32px;text-align:center;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);">
     <div style="font-size:40px;margin-bottom:12px;">ℹ️</div>
     <h3 id="modal-ten-coso" style="font-size:20px;font-weight:800;margin-bottom:8px;">Cơ Sở Thể Thao</h3>

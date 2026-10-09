@@ -35,6 +35,7 @@
           <th style="text-align:right;">Tổng Tiền</th>
           <th style="text-align:center;">Trạng Thái</th>
           <th style="text-align:center;">Mã Check-in</th>
+          <th style="text-align:right;">Thao Tác</th>
         </tr>
       </thead>
       <tbody>
@@ -69,7 +70,24 @@
             {% endif %}
           </td>
           <td style="text-align:center;">
-            <code style="background:var(--bg-subtle);color:var(--primary);padding:4px 8px;border-radius:6px;font-weight:700;font-size:12px;border:1px solid var(--border);">{{ d.maQR }}</code>
+            <div style="display:inline-flex;flex-direction:column;align-items:center;gap:4px;">
+              <code style="background:var(--bg-subtle);color:var(--primary);padding:3px 8px;border-radius:6px;font-weight:700;font-size:12px;border:1px solid var(--border);">{{ d.maQR }}</code>
+              <a href="/coso/8/cam-on?id={{ d.datLichId }}" class="btn btn-secondary btn-sm" style="padding:2px 8px;font-size:10px;font-weight:700;" title="Mở mã QR check-in & thanh toán">
+                📱 Xem Mã QR
+              </a>
+            </div>
+          </td>
+          <td style="text-align:right;">
+            <div style="display:inline-flex;gap:4px;">
+              <a href="/coso/8/hoa-don/{{ d.datLichId }}" class="btn btn-secondary btn-sm" style="padding:4px 8px;font-size:11px;" title="Xem & In Hóa Đơn">
+                🖨️ Hóa Đơn
+              </a>
+              {% if d.trangThai != 'DaThanhToan' and d.trangThai != 'Huy' %}
+                <a href="/coso/8/cam-on?id={{ d.datLichId }}" class="btn btn-primary btn-sm" style="padding:4px 8px;font-size:11px;background:#16A34A;border-color:#16A34A;" title="Quét mã QR thanh toán ngay">
+                  💳 Trả QR
+                </a>
+              {% endif %}
+            </div>
           </td>
         </tr>
         {% endfor %}

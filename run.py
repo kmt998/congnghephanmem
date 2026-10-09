@@ -15,7 +15,7 @@ app = create_app()
 
 if __name__ == "__main__":
     print("\n" + "=" * 65)
-    print("  TRUNG TAM THE THAO DA NANG - CHUOI 10 CO SO")
+    print("  QUAN LY CHUOI DICH VU THE DUC THE THAO - CHUOI 10 CO SO")
     print("  * Web tong:        http://localhost:5000")
     print("  * Co so Bong Ban:  http://localhost:5000/coso/8")
     print("  * Dat ban bong ban:http://localhost:5000/coso/8/dat-lich")

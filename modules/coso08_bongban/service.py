@@ -13,7 +13,7 @@ CO_SO_ID = 8
 # ── DỮ LIỆU MẪU CHUẨN BÓNG BÀN (Fallback khi offline DB) ──────────────────────
 MOCK_TAI_NGUYEN = [
     {
-        "taiNguyenId": 801,
+        "taiNguyenId": 5,
         "ten": "Bàn 01 — DHS Rainbow Pro",
         "loai": "Ban",
         "sucChua": 4,
@@ -24,7 +24,7 @@ MOCK_TAI_NGUYEN = [
         "hinhAnh": "dhs_rainbow"
     },
     {
-        "taiNguyenId": 802,
+        "taiNguyenId": 6,
         "ten": "Bàn 02 — Butterfly Octet 25",
         "loai": "Ban",
         "sucChua": 4,
@@ -35,7 +35,7 @@ MOCK_TAI_NGUYEN = [
         "hinhAnh": "butterfly_octet"
     },
     {
-        "taiNguyenId": 803,
+        "taiNguyenId": 7,
         "ten": "Bàn 03 — Double Fish 233",
         "loai": "Ban",
         "sucChua": 4,
@@ -46,7 +46,7 @@ MOCK_TAI_NGUYEN = [
         "hinhAnh": "double_fish"
     },
     {
-        "taiNguyenId": 804,
+        "taiNguyenId": 8,
         "ten": "Bàn 04 — Double Fish 233",
         "loai": "Ban",
         "sucChua": 4,
@@ -57,7 +57,7 @@ MOCK_TAI_NGUYEN = [
         "hinhAnh": "double_fish"
     },
     {
-        "taiNguyenId": 805,
+        "taiNguyenId": 9,
         "ten": "Bàn 05 — Robot Bắn Bóng Thông Minh",
         "loai": "Ban",
         "sucChua": 2,
@@ -68,7 +68,7 @@ MOCK_TAI_NGUYEN = [
         "hinhAnh": "robot_pong"
     },
     {
-        "taiNguyenId": 806,
+        "taiNguyenId": 10,
         "ten": "Bàn 06 — Phòng VIP Đơn Lập",
         "loai": "Ban",
         "sucChua": 4,
@@ -270,8 +270,28 @@ def tao_dat_lich_moi(tai_khoan_id, tai_nguyen_id, bat_dau_str, ket_thuc_str, hlv
     tong_tien = tien_ban + tien_hlv + tien_dv
     ma_qr = f"BB{datetime.now().strftime('%Y%m%d')}_{uuid.uuid4().hex[:6].upper()}"
 
+    dat_lich_id_db = len(IN_MEMORY_DAT_LICH) + 101
+
+    # Nếu có SQL Server, lưu vào DB và lấy ID thật
+    try:
+        from core.db import get_db
+        db = get_db()
+        cur = db.cursor()
+        cur.execute("""
+            INSERT INTO DatLich (TaiKhoanId, CoSoId, TaiNguyenId, BatDau, KetThuc, SoNguoi, TongTien, TrangThai, MaQR)
+            OUTPUT INSERTED.DatLichId
+            VALUES (?, ?, ?, ?, ?, 2, ?, 'ChoThanhToan', ?)
+        """, (tai_khoan_id, CO_SO_ID, tai_nguyen_id, dt_bd, dt_kt, tong_tien, ma_qr))
+        row = cur.fetchone()
+        if row:
+            dat_lich_id_db = row[0]
+        db.commit()
+        db.close()
+    except Exception as e:
+        print("Loi ghi DatLich vao DB:", e)
+
     don = {
-        "datLichId": len(IN_MEMORY_DAT_LICH) + 101,
+        "datLichId": dat_lich_id_db,
         "taiKhoanId": tai_khoan_id,
         "coSoId": CO_SO_ID,
         "taiNguyenId": tai_nguyen_id,
@@ -290,26 +310,264 @@ def tao_dat_lich_moi(tai_khoan_id, tai_nguyen_id, bat_dau_str, ket_thuc_str, hlv
     }
 
     IN_MEMORY_DAT_LICH.insert(0, don)
+    return {"ok": True, "don": don}
 
-    # Nếu có SQL Server, lưu vào DB
+
+def doc_so_thanh_chu(n: int) -> str:
+    """Chuyển đổi số tiền VNĐ thành chữ tiếng Việt."""
+    if not isinstance(n, (int, float)) or n == 0:
+        return "Không đồng"
+    n = int(round(n))
+    chu_so = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"]
+    don_vi = ["", "nghìn", "triệu", "tỷ"]
+
+    def doc_ba_so(baso, day_du=False):
+        t = baso // 100
+        c = (baso % 100) // 10
+        d = baso % 10
+        res = ""
+        if t > 0 or day_du:
+            res += chu_so[t] + " trăm "
+        if c > 1:
+            res += chu_so[c] + " mươi "
+            if d == 1:
+                res += "mốt "
+            elif d == 5:
+                res += "lăm "
+            elif d > 0:
+                res += chu_so[d] + " "
+        elif c == 1:
+            res += "mười "
+            if d == 5:
+                res += "lăm "
+            elif d > 0:
+                res += chu_so[d] + " "
+        elif c == 0:
+            if d > 0 and (t > 0 or day_du):
+                res += "lẻ " + chu_so[d] + " "
+            elif d > 0:
+                res += chu_so[d] + " "
+        return res.strip()
+
+    parts = []
+    so = n
+    idx = 0
+    while so > 0:
+        baso = so % 1000
+        if baso > 0:
+            chu = doc_ba_so(baso, so // 1000 > 0)
+            parts.insert(0, chu + " " + don_vi[idx])
+        idx += 1
+        so //= 1000
+    res = " ".join(parts).strip() + " đồng"
+    return res.capitalize()
+
+
+def lay_thong_tin_dat_lich(qr_hoac_id):
+    """Tìm thông tin đơn đặt lịch theo ID hoặc MaQR từ DB hoặc memory."""
+    try:
+        from core.db import get_db
+        db = get_db()
+        cur = db.cursor()
+        
+        # Thử tìm theo ID nếu là số, hoặc theo MaQR nếu là chuỗi
+        is_id = str(qr_hoac_id).isdigit()
+        if is_id:
+            cur.execute("""
+                SELECT D.DatLichId, D.TaiKhoanId, D.CoSoId, D.TaiNguyenId, D.BatDau, D.KetThuc,
+                       D.TongTien, D.TrangThai, D.MaQR, D.NgayTao,
+                       T.TenTaiNguyen, T.GiaMoiGio, C.TenCoSo, C.DiaChi, C.MonTheThao,
+                       U.HoTen, U.TenDangNhap, U.Email
+                FROM DatLich D
+                LEFT JOIN TaiNguyen T ON D.TaiNguyenId = T.TaiNguyenId
+                LEFT JOIN CoSo C ON D.CoSoId = C.CoSoId
+                LEFT JOIN TaiKhoan U ON D.TaiKhoanId = U.TaiKhoanId
+                WHERE D.DatLichId = ? OR D.MaQR = ?
+            """, (int(qr_hoac_id), str(qr_hoac_id)))
+        else:
+            cur.execute("""
+                SELECT D.DatLichId, D.TaiKhoanId, D.CoSoId, D.TaiNguyenId, D.BatDau, D.KetThuc,
+                       D.TongTien, D.TrangThai, D.MaQR, D.NgayTao,
+                       T.TenTaiNguyen, T.GiaMoiGio, C.TenCoSo, C.DiaChi, C.MonTheThao,
+                       U.HoTen, U.TenDangNhap, U.Email
+                FROM DatLich D
+                LEFT JOIN TaiNguyen T ON D.TaiNguyenId = T.TaiNguyenId
+                LEFT JOIN CoSo C ON D.CoSoId = C.CoSoId
+                LEFT JOIN TaiKhoan U ON D.TaiKhoanId = U.TaiKhoanId
+                WHERE D.MaQR = ?
+            """, (str(qr_hoac_id),))
+        r = cur.fetchone()
+        db.close()
+        if r:
+            return {
+                "datLichId": r[0],
+                "taiKhoanId": r[1],
+                "coSoId": r[2],
+                "taiNguyenId": r[3],
+                "batDau": r[4],
+                "ketThuc": r[5],
+                "tongTien": r[6],
+                "trangThai": r[7],
+                "maQR": r[8],
+                "ngayTao": r[9],
+                "tenBan": r[10] or f"Bàn #{r[3]}",
+                "giaMoiGio": r[11] or 60000,
+                "tenCoSo": r[12] or "Cơ Sở Bóng Bàn Đỉnh Cao",
+                "diaChi": r[13] or "45 Đinh Tiên Hoàng, P. Bến Nghé, Quận 1, TP.HCM",
+                "monTheThao": r[14] or "Bóng bàn",
+                "hoTen": r[15] or "Hội viên",
+                "tenDangNhap": r[16] or "",
+                "email": r[17] or ""
+            }
+    except Exception as e:
+        print("Loi lay don dat lich tu DB:", e)
+
+    # Fallback memory
+    for d in IN_MEMORY_DAT_LICH:
+        if str(d.get("datLichId")) == str(qr_hoac_id) or d.get("maQR") == str(qr_hoac_id):
+            res = dict(d)
+            ds_ban = lay_danh_sach_tai_nguyen()
+            ban = next((b for b in ds_ban if b["taiNguyenId"] == d.get("taiNguyenId")), None)
+            res["tenBan"] = ban["ten"] if ban else f"Bàn #{d.get('taiNguyenId')}"
+            res["giaMoiGio"] = ban["giaMoiGio"] if ban else 60000
+            res["tenCoSo"] = "Cơ Sở Bóng Bàn Đỉnh Cao"
+            res["diaChi"] = "45 Đinh Tiên Hoàng, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh"
+            res["monTheThao"] = "Bóng bàn"
+            res["hoTen"] = "Khách Hàng"
+            res["tenDangNhap"] = ""
+            res["email"] = ""
+            return res
+
+    # Fallback cho maQR truyen vao neu khong tim thay
+    if qr_hoac_id and str(qr_hoac_id).startswith("BB"):
+        return {
+            "datLichId": 101,
+            "taiKhoanId": 1,
+            "coSoId": CO_SO_ID,
+            "taiNguyenId": 5,
+            "batDau": datetime.now(),
+            "ketThuc": datetime.now(),
+            "tongTien": 60000,
+            "trangThai": "ChoThanhToan",
+            "maQR": str(qr_hoac_id),
+            "ngayTao": datetime.now(),
+            "tenBan": "Bàn 01 — DHS Rainbow Pro",
+            "giaMoiGio": 60000,
+            "tenCoSo": "Cơ Sở Bóng Bàn Đỉnh Cao",
+            "diaChi": "45 Đinh Tiên Hoàng, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh",
+            "monTheThao": "Bóng bàn",
+            "hoTen": "Hội Viên",
+            "tenDangNhap": "",
+            "email": ""
+        }
+
+    return None
+
+
+def tao_ma_qr_base64(noi_dung: str) -> str:
+    """Tạo ảnh QR Code chuẩn PNG base64, chạy offline hoàn toàn không phụ thuộc internet."""
+    try:
+        import qrcode
+        import io
+        import base64
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_M,
+            box_size=8,
+            border=2,
+        )
+        qr.add_data(noi_dung)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+        return f"data:image/png;base64,{b64}"
+    except Exception as e:
+        return f"https://api.qrserver.com/v1/create-qr-code/?size=240x240&data={noi_dung}"
+
+
+def xac_nhan_thanh_toan(dat_lich_id: int, phuong_thuc: str = "ChuyenKhoanQR") -> dict:
+    """Cập nhật trạng thái đơn đặt sang DaThanhToan và tạo bản ghi Hóa Đơn."""
+    try:
+        from core.db import get_db
+        db = get_db()
+        cur = db.cursor()
+
+        cur.execute("SELECT TaiKhoanId, CoSoId, TongTien FROM DatLich WHERE DatLichId = ?", (dat_lich_id,))
+        row = cur.fetchone()
+        if not row:
+            db.close()
+            return {"ok": False, "error": f"Không tìm thấy đơn đặt #{dat_lich_id}"}
+
+        tk_id, cs_id, tong_tien = row
+
+        # 1. Cập nhật trạng thái đơn đặt
+        cur.execute("UPDATE DatLich SET TrangThai = 'DaThanhToan' WHERE DatLichId = ?", (dat_lich_id,))
+
+        # 2. Tạo hóa đơn thanh toán nếu chưa có
+        cur.execute("SELECT HoaDonId FROM HoaDon WHERE DatLichId = ?", (dat_lich_id,))
+        hd_row = cur.fetchone()
+        if not hd_row:
+            cur.execute("""
+                INSERT INTO HoaDon (TaiKhoanId, CoSoId, DatLichId, SoTien, PhuongThuc, TrangThai)
+                VALUES (?, ?, ?, ?, ?, 'DaThanhToan')
+            """, (tk_id, cs_id, dat_lich_id, tong_tien, phuong_thuc))
+
+        db.commit()
+        db.close()
+
+        # Cập nhật memory nếu có
+        for d in IN_MEMORY_DAT_LICH:
+            if d.get("datLichId") == dat_lich_id:
+                d["trangThai"] = "DaThanhToan"
+
+        return {"ok": True, "datLichId": dat_lich_id}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def lay_lich_su_cua_user(tai_khoan_id):
+    """Lấy danh sách lịch sử đặt của hội viên (ưu tiên từ DB)."""
+    ds_ban = lay_danh_sach_tai_nguyen()
+    res = []
+
     try:
         from core.db import get_db
         db = get_db()
         cur = db.cursor()
         cur.execute("""
-            INSERT INTO DatLich (TaiKhoanId, CoSoId, TaiNguyenId, BatDau, KetThuc, SoNguoi, TongTien, TrangThai, MaQR)
-            VALUES (?, ?, ?, ?, ?, 2, ?, 'ChoThanhToan', ?)
-        """, (tai_khoan_id, CO_SO_ID, tai_nguyen_id, dt_bd, dt_kt, tong_tien, ma_qr))
-        db.commit()
+            SELECT D.DatLichId, D.TaiNguyenId, D.BatDau, D.KetThuc, D.TongTien, D.TrangThai, D.MaQR,
+                   T.TenTaiNguyen, D.CoSoId, C.TenCoSo, D.NgayTao
+            FROM DatLich D
+            LEFT JOIN TaiNguyen T ON D.TaiNguyenId = T.TaiNguyenId
+            LEFT JOIN CoSo C ON D.CoSoId = C.CoSoId
+            WHERE D.TaiKhoanId = ? AND D.CoSoId = ?
+            ORDER BY D.DatLichId DESC
+        """, (tai_khoan_id, CO_SO_ID))
+        rows = cur.fetchall()
         db.close()
-    except Exception:
-        pass
+        if rows:
+            for r in rows:
+                res.append({
+                    "datLichId": r[0],
+                    "taiKhoanId": tai_khoan_id,
+                    "taiNguyenId": r[1],
+                    "batDau": r[2],
+                    "ketThuc": r[3],
+                    "tongTien": r[4],
+                    "trangThai": r[5],
+                    "maQR": r[6],
+                    "tenBan": r[7] or f"Bàn #{r[1]}",
+                    "coSoId": r[8],
+                    "tenCoSo": r[9],
+                    "ngayTao": r[10]
+                })
+            return res
+    except Exception as e:
+        print("Loi lay lich su tu DB:", e)
 
-    return {"ok": True, "don": don}
-
-def lay_lich_su_cua_user(tai_khoan_id):
-    ds_ban = lay_danh_sach_tai_nguyen()
-    res = []
+    # Fallback memory
     for d in IN_MEMORY_DAT_LICH:
         if d["taiKhoanId"] == tai_khoan_id:
             ban = next((b for b in ds_ban if b["taiNguyenId"] == d["taiNguyenId"]), None)

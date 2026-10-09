@@ -1,0 +1,1639 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container section">
+
+  <!-- Breadcrumbs -->
+  <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:16px;">
+    <a href="/" style="color:var(--text-muted)">Trang chủ</a> 
+    <span>›</span> 
+    <span style="color:var(--text-main);font-weight:600;">
+      {{ 'Khu Vực Quản Trị Toàn Chuỗi' if is_admin else ('Bảng Quản Lý Cơ Sở ' ~ ("%02d"|format(quan_ly_cs_id))) }}
+    </span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════
+       BỐ CỤC CHÍNH: THANH MENU BÊN TRÁI + NỘI DUNG TAB BÊN PHẢI
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <div class="admin-layout">
+
+    <!-- ──────────────────────────────────────────────────────────────────────
+         SIDEBAR BÊN TRÁI: DANH MỤC QUẢN TRỊ & THAO TÁC NHANH
+    ────────────────────────────────────────────────────────────────────── -->
+    <aside class="admin-sidebar">
+      
+      <!-- Tiêu Đề Menu với Biểu Tượng 3 Gạch (Hamburger) -->
+      <div class="admin-sidebar-header">
+        <button type="button" class="admin-hamburger-btn" id="btnToggleSidebar" onclick="toggleSidebarMenu()" title="Thu gọn / Mở rộng menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <span class="admin-sidebar-title">Menu Quản Trị</span>
+      </div>
+
+      <!-- Menu Điều Hướng Tab -->
+      <div class="sidebar-section-title" style="font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;padding:0 8px 8px 8px;">
+        DANH MỤC QUẢN TRỊ
+      </div>
+      
+      {% set current_tab = active_tab or 'tongquan' %}
+      <nav class="admin-nav-menu">
+        
+        <!-- Tab 1: Tổng Quan -->
+        <button type="button" class="admin-nav-item {{ 'active' if current_tab == 'tongquan' else '' }}" data-tab="tongquan" onclick="chuyenTab('tongquan', true)">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="9"></rect>
+              <rect x="14" y="3" width="7" height="5"></rect>
+              <rect x="14" y="12" width="7" height="9"></rect>
+              <rect x="3" y="16" width="7" height="5"></rect>
+            </svg>
+          </span>
+          <span class="nav-label">Tổng Quan & KPI</span>
+        </button>
+
+        <!-- Tab 2: Lịch Đặt (Ưu tiên đưa lên cao) -->
+        <button type="button" class="admin-nav-item {{ 'active' if current_tab == 'datlich' else '' }}" data-tab="datlich" onclick="chuyenTab('datlich', true)">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </span>
+          <span class="nav-label">Quản Lý Lịch Đặt</span>
+          <span class="nav-badge" style="background:#EFF6FF;color:#2563EB;">{{ datlich_list|length }}</span>
+        </button>
+
+        <!-- Tab 3: Tài Khoản -->
+        <button type="button" class="admin-nav-item {{ 'active' if current_tab == 'taikhoan' else '' }}" data-tab="taikhoan" onclick="chuyenTab('taikhoan', true)">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </span>
+          <span class="nav-label">{{ 'Tài Khoản Toàn Chuỗi' if is_admin else 'Hội Viên Cơ Sở' }}</span>
+          <span class="nav-badge">{{ tk_list|length }}</span>
+        </button>
+
+        <!-- Tab 4: Cơ Sở -->
+        <button type="button" class="admin-nav-item {{ 'active' if current_tab == 'coso' else '' }}" data-tab="coso" onclick="chuyenTab('coso', true)">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18"></path>
+              <path d="M5 21V7l8-4v18"></path>
+              <path d="M19 21V11l-6-4"></path>
+            </svg>
+          </span>
+          <span class="nav-label">{{ 'Mạng Lưới 10 Cơ Sở' if is_admin else 'Thông Tin Cơ Sở' }}</span>
+          <span class="nav-badge">{{ coso_list|length }}</span>
+        </button>
+
+        <!-- Tab 5: Khuyến Mãi -->
+        <button type="button" class="admin-nav-item {{ 'active' if current_tab == 'khuyenmai' else '' }}" data-tab="khuyenmai" onclick="chuyenTab('khuyenmai', true)">
+          <span class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 12 20 22 4 22 4 12"></polyline>
+              <rect x="2" y="7" width="20" height="5"></rect>
+              <line x1="12" y1="22" x2="12" y2="7"></line>
+              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+            </svg>
+          </span>
+          <span class="nav-label">Khuyến Mãi & Voucher</span>
+          <span class="nav-badge" style="background:#EDE9FE;color:#7C3AED;">{{ khuyenmai_list|length }}</span>
+        </button>
+
+      </nav>
+
+      <!-- Phím Tắt Nhanh -->
+      <div class="admin-quick-actions" style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);">
+        <div class="sidebar-section-title" style="font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;padding:0 8px 8px 8px;">
+          THAO TÁC NHANH
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <a href="/checkin" class="btn btn-primary btn-sm" style="text-align:left;width:100%;font-size:12.5px;font-weight:700;padding:9px 12px;background:linear-gradient(135deg, #2563EB, #1D4ED8);color:#fff;box-shadow:var(--shadow-xs);">
+            Trạm Quét QR Check-in
+          </a>
+          <button class="btn btn-secondary btn-sm" style="text-align:left;width:100%;font-size:12px;font-weight:600;padding:8px 12px;" onclick="moModal('modalThemTaiKhoan')">
+            {{ 'Thêm Tài Khoản Mới' if is_admin else 'Thêm Hội Viên Mới' }}
+          </button>
+          <button class="btn btn-secondary btn-sm" style="text-align:left;width:100%;font-size:12px;font-weight:600;padding:8px 12px;" onclick="moModal('modalThemKhuyenMai')">
+            Tạo Mã Khuyến Mãi
+          </button>
+          {% if is_admin %}
+          <button class="btn btn-secondary btn-sm" style="text-align:left;width:100%;font-size:12px;font-weight:600;padding:8px 12px;" onclick="moModal('modalThemCoSo')">
+            Thêm Cơ Sở Mới
+          </button>
+          {% endif %}
+          {% if is_admin or quan_ly_cs_id == 8 %}
+          <a href="/coso/8" class="btn btn-secondary btn-sm" style="text-align:left;width:100%;font-size:12px;font-weight:600;padding:8px 12px;background:var(--bg-subtle);">
+            Vào Sân Bóng Bàn CS 08
+          </a>
+          {% endif %}
+          <a href="/khuyen-mai" target="_blank" class="btn btn-secondary btn-sm" style="text-align:left;width:100%;font-size:12px;font-weight:600;padding:8px 12px;background:var(--bg-subtle);">
+            Xem Trang Ưu Đãi
+          </a>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ──────────────────────────────────────────────────────────────────────
+         NỘI DUNG CHÍNH BÊN PHẢI (CHUYỂN THEO TAB ĐƯỢC CHỌN)
+    ────────────────────────────────────────────────────────────────────── -->
+    <main class="admin-main-content">
+
+      <!-- ════════════════════════════════════════════════════════════════════
+           TAB 1: TỔNG QUAN & KPI
+      ════════════════════════════════════════════════════════════════════ -->
+      <div id="tab-tongquan" class="admin-tab-pane {{ 'active' if current_tab == 'tongquan' else '' }}">
+        <!-- Banner Chào Mừng -->
+        <div style="background:linear-gradient(135deg, #1E293B 0%, #0F172A 100%);color:#fff;padding:28px 32px;border-radius:var(--radius-xl);margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;box-shadow:var(--shadow-md);">
+          <div>
+            {% if is_admin %}
+              <h1 style="font-size:24px;font-weight:800;letter-spacing:-0.5px;margin:0 0 6px 0;color:#fff;">
+                Bảng Điều Khiển Quản Trị Hệ Thống
+              </h1>
+              <p style="color:#94A3B8;font-size:13px;margin:0;">
+                Toàn quyền quản lý 10 cơ sở, tài khoản nhân sự và điều phối đơn đặt lịch toàn bộ hệ thống.
+              </p>
+            {% else %}
+              <h1 style="font-size:24px;font-weight:800;letter-spacing:-0.5px;margin:0 0 6px 0;color:#fff;">
+                Bảng Điều Khiển Quản Lý Cơ Sở {{ "%02d"|format(quan_ly_cs_id) }}
+              </h1>
+              <p style="color:#94A3B8;font-size:13px;margin:0;">
+                Quản lý danh sách hội viên đăng ký, danh mục sân chơi và điều phối lịch đặt tại cơ sở của bạn.
+              </p>
+            {% endif %}
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" onclick="chuyenTab('datlich')">
+              Xem Lịch Đặt
+            </button>
+            <button class="btn btn-secondary btn-sm" style="background:#4C1D95;color:#EDE9FE;border-color:#6D28D9;" onclick="moModal('modalThemKhuyenMai')">
+              Thêm Khuyến Mãi
+            </button>
+          </div>
+        </div>
+
+        <!-- 5 KPI Cards Thống Kê -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:14px;margin-bottom:28px;">
+          <!-- Card 1: Cơ sở -->
+          <div class="card card-body" style="border-radius:var(--radius-lg);padding:18px;cursor:pointer;" onclick="chuyenTab('coso')">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:12px;font-weight:600;color:var(--text-muted);">
+                {{ 'Cơ Sở Thành Viên' if is_admin else 'Cơ Sở Phụ Trách' }}
+              </span>
+            </div>
+            <div style="font-size:26px;font-weight:800;color:var(--text-main);margin-top:6px;">
+              {% if is_admin %}
+                {{ stats.tong_coso }} <span style="font-size:13px;font-weight:500;color:var(--text-muted);">cơ sở</span>
+              {% else %}
+                #{{ "%02d"|format(quan_ly_cs_id) }}
+              {% endif %}
+            </div>
+            <div style="font-size:11px;color:var(--primary);font-weight:600;margin-top:4px;">
+              Xem chi tiết ➜
+            </div>
+          </div>
+
+          <!-- Card 2: Tài khoản -->
+          <div class="card card-body" style="border-radius:var(--radius-lg);padding:18px;cursor:pointer;" onclick="chuyenTab('taikhoan')">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:12px;font-weight:600;color:var(--text-muted);">
+                {{ 'Tài Khoản Toàn Chuỗi' if is_admin else 'Hội Viên Cơ Sở' }}
+              </span>
+            </div>
+            <div style="font-size:26px;font-weight:800;color:var(--text-main);margin-top:6px;">
+              {{ stats.tong_tk }} <span style="font-size:13px;font-weight:500;color:var(--text-muted);">{{ 'tài khoản' if is_admin else 'hội viên' }}</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
+              {% if is_admin %}
+                {{ stats.tong_quanly }} Quản lý • {{ stats.tong_hoivien }} Hội viên
+              {% else %}
+                Thuộc cơ sở của bạn
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Card 3: Lịch đặt -->
+          <div class="card card-body" style="border-radius:var(--radius-lg);padding:18px;cursor:pointer;" onclick="chuyenTab('datlich')">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:12px;font-weight:600;color:var(--text-muted);">Lịch Đặt Chỗ</span>
+            </div>
+            <div style="font-size:26px;font-weight:800;color:var(--text-main);margin-top:6px;">
+              {{ stats.tong_datlich }} <span style="font-size:13px;font-weight:500;color:var(--text-muted);">lượt đặt</span>
+            </div>
+            <div style="font-size:11px;color:var(--primary);font-weight:600;margin-top:4px;">
+              Duyệt lịch đặt ➜
+            </div>
+          </div>
+
+          <!-- Card 4: Khuyến mãi -->
+          <div class="card card-body" style="border-radius:var(--radius-lg);padding:18px;cursor:pointer;" onclick="chuyenTab('khuyenmai')">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:12px;font-weight:600;color:var(--text-muted);">Khuyến Mãi & Voucher</span>
+            </div>
+            <div style="font-size:26px;font-weight:800;color:#9333EA;margin-top:6px;">
+              {{ stats.tong_khuyenmai }} <span style="font-size:13px;font-weight:500;color:var(--text-muted);">đang chạy</span>
+            </div>
+            <div style="font-size:11px;color:#9333EA;font-weight:600;margin-top:4px;">
+              Quản lý ưu đãi ➜
+            </div>
+          </div>
+
+          <!-- Card 5: Doanh thu -->
+          <div class="card card-body" style="border-radius:var(--radius-lg);padding:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:12px;font-weight:600;color:var(--text-muted);">
+                {{ 'Doanh Thu Toàn Chuỗi' if is_admin else 'Doanh Thu Cơ Sở' }}
+              </span>
+            </div>
+            <div style="font-size:26px;font-weight:800;color:var(--primary);margin-top:6px;">
+              {{ "{:,.0f}".format(stats.tong_doanhthu) }} <span style="font-size:13px;font-weight:500;color:var(--text-muted);">đ</span>
+            </div>
+            <div style="font-size:11px;color:var(--success);font-weight:600;margin-top:4px;">
+              ● SQL Server Realtime
+            </div>
+          </div>
+        </div>
+
+        <!-- Lối Tắt Nhanh Đến Các Phân Hệ -->
+        <div class="card card-body" style="border-radius:var(--radius-lg);padding:24px;margin-bottom:28px;">
+          <h3 style="font-size:16px;font-weight:800;margin:0 0 16px 0;display:flex;align-items:center;gap:8px;">
+            Phân Hệ Quản Trị Trực Tuyến
+          </h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;">
+            
+            <div style="padding:16px;background:var(--bg-subtle);border-radius:var(--radius-md);border:1px solid var(--border);cursor:pointer;" onclick="chuyenTab('datlich')">
+              <strong style="font-size:14px;color:var(--text-main);display:block;margin-bottom:4px;">Quản Lý Đơn Đặt Sân</strong>
+              <p style="font-size:12px;color:var(--text-muted);margin:0 0 8px 0;line-height:1.4;">
+                Duyệt trạng thái giữ bàn, xác nhận thanh toán và in biên lai hóa đơn chuẩn K80.
+              </p>
+              <span style="font-size:12px;color:var(--primary);font-weight:700;">Mở danh sách đơn ➜</span>
+            </div>
+
+            <div style="padding:16px;background:var(--bg-subtle);border-radius:var(--radius-md);border:1px solid var(--border);cursor:pointer;" onclick="chuyenTab('taikhoan')">
+              <strong style="font-size:14px;color:var(--text-main);display:block;margin-bottom:4px;">Tài Khoản & Hội Viên</strong>
+              <p style="font-size:12px;color:var(--text-muted);margin:0 0 8px 0;line-height:1.4;">
+                Thêm tài khoản khách hàng mới, thiết lập quyền Quản lý cơ sở hoặc thay đổi mật khẩu.
+              </p>
+              <span style="font-size:12px;color:var(--primary);font-weight:700;">Xem tài khoản ➜</span>
+            </div>
+
+            <div style="padding:16px;background:var(--bg-subtle);border-radius:var(--radius-md);border:1px solid var(--border);cursor:pointer;" onclick="chuyenTab('khuyenmai')">
+              <strong style="font-size:14px;color:var(--text-main);display:block;margin-bottom:4px;">Khuyến Mãi & Voucher</strong>
+              <p style="font-size:12px;color:var(--text-muted);margin:0 0 8px 0;line-height:1.4;">
+                Tạo mã voucher giảm giá %, bật/tắt tạm dừng ưu đãi, đồng bộ trực tiếp ra trang khách hàng.
+              </p>
+              <span style="font-size:12px;color:var(--primary);font-weight:700;">Quản lý voucher ➜</span>
+            </div>
+
+            <div style="padding:16px;background:var(--bg-subtle);border-radius:var(--radius-md);border:1px solid var(--border);cursor:pointer;" onclick="chuyenTab('coso')">
+              <strong style="font-size:14px;color:var(--text-main);display:block;margin-bottom:4px;">Mạng Lưới Cơ Sở</strong>
+              <p style="font-size:12px;color:var(--text-muted);margin:0 0 8px 0;line-height:1.4;">
+                Cập nhật địa chỉ, thời gian đóng/mở cửa, môn thể thao chuyên môn của từng cơ sở.
+              </p>
+              <span style="font-size:12px;color:var(--primary);font-weight:700;">Thông tin cơ sở ➜</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════════════════════
+           TAB 2: QUẢN LÝ LỊCH ĐẶT & IN HÓA ĐƠN
+      ════════════════════════════════════════════════════════════════════ -->
+      <div id="tab-datlich" class="admin-tab-pane {{ 'active' if current_tab == 'datlich' else '' }}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+          <div>
+            <h2 style="font-size:20px;font-weight:800;margin:0 0 4px 0;display:flex;align-items:center;gap:8px;">
+              Quản Lý Lịch Đặt Chỗ & In Hóa Đơn (DatLich)
+            </h2>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;">
+              {% if is_admin %}
+                Giám sát và điều phối toàn bộ lịch đặt chỗ của khách hàng tại cả 10 cơ sở thể thao.
+              {% else %}
+                Chỉ hiển thị và xử lý các đơn đặt bàn/sân tại cơ sở của bạn.
+              {% endif %}
+            </p>
+          </div>
+
+          <span class="badge badge-info" style="font-size:12px;padding:6px 12px;">
+            Tổng: {{ datlich_list|length }} đơn đặt
+          </span>
+        </div>
+
+        <!-- Thanh Quét & Nhận Diện Nhanh Mã QR / Mã Đơn Đặt Sân -->
+        <div style="background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:280px;">
+            <div style="flex:1;">
+              <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">
+                Nhận Diện Mã QR Đơn Đặt Sân & Check-in
+              </div>
+              <div style="display:flex;gap:8px;margin-top:6px;max-width:540px;">
+                <input type="text" id="quickQrInput" placeholder="Nhập mã đơn (#11), mã QR hóa đơn hoặc bấm máy quét..."
+                       style="flex:1;padding:8px 12px;font-size:13px;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-main);"
+                       onkeydown="if(event.key==='Enter'){event.preventDefault();xuLyNhanDienNhanh();}">
+                <button type="button" class="btn btn-primary btn-sm" onclick="xuLyNhanDienNhanh()" style="white-space:nowrap;padding:8px 14px;font-weight:700;">
+                  Nhận Diện
+                </button>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <a href="/checkin" class="btn btn-secondary btn-sm" style="display:inline-flex;align-items:center;gap:6px;font-weight:700;padding:8px 14px;">
+              Trạm Check-in Camera
+            </a>
+          </div>
+        </div>
+
+        <div class="card" style="border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-xs);">
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;text-align:left;">
+              <thead>
+                <tr style="background:var(--bg-subtle);border-bottom:1px solid var(--border);color:var(--text-muted);font-size:12px;text-transform:uppercase;white-space:nowrap;">
+                  <th style="padding:12px 16px;white-space:nowrap;">Mã Đơn</th>
+                  <th style="padding:12px 16px;min-width:170px;">Khách Hàng</th>
+                  <th style="padding:12px 16px;min-width:170px;">Cơ Sở & Môn</th>
+                  <th style="padding:12px 16px;white-space:nowrap;">Ngày Đặt</th>
+                  <th style="padding:12px 16px;white-space:nowrap;">Khung Giờ</th>
+                  <th style="padding:12px 16px;white-space:nowrap;">Tổng Tiền</th>
+                  <th style="padding:12px 16px;white-space:nowrap;">Trạng Thái</th>
+                  <th style="padding:12px 16px;text-align:right;white-space:nowrap;">Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if datlich_list %}
+                  {% for dl in datlich_list %}
+                  <tr style="border-bottom:1px solid var(--border);">
+                    <td style="padding:12px 16px;font-weight:700;white-space:nowrap;">#{{ dl[0] }}</td>
+                    <td style="padding:12px 16px;min-width:170px;">
+                      <strong style="color:var(--text-main);">{{ dl[6] or 'Khách vãng lai' }}</strong>
+                      <div style="font-size:11px;color:var(--text-muted);">{{ dl[7] }}</div>
+                    </td>
+                    <td style="padding:12px 16px;min-width:170px;">
+                      <strong>{{ dl[8] }}</strong>
+                      <div style="font-size:11px;color:var(--text-muted);">{{ dl[9] }}</div>
+                    </td>
+                    <td style="padding:12px 16px;white-space:nowrap;">{{ dl[1] }}</td>
+                    <td style="padding:12px 16px;color:var(--text-muted);white-space:nowrap;">{{ dl[2] }} - {{ dl[3] }}</td>
+                    <td style="padding:12px 16px;font-weight:700;color:var(--primary);white-space:nowrap;">
+                      {{ "{:,.0f}".format(dl[4] or 0) }}đ
+                    </td>
+                    <td style="padding:12px 16px;white-space:nowrap;">
+                      <!-- Form đổi trạng thái nhanh -->
+                      <form method="POST" action="/admin/datlich/trangthai/{{ dl[0] }}" style="margin:0;display:inline-block;">
+                        <select name="trang_thai" onchange="this.form.submit()" 
+                                style="font-size:12px;font-weight:600;padding:4px 8px;border-radius:6px;border:1px solid var(--border);cursor:pointer;white-space:nowrap;
+                                       background:{{ '#DCFCE7;color:#15803D;' if dl[5] in ('DaThanhToan', 'DaXacNhan') else ('#FEF3C7;color:#D97706;' if dl[5] in ('ChoThanhToan', 'ChoXacNhan') else ('#FEE2E2;color:#DC2626;' if dl[5] == 'Huy' else '#EFF6FF;color:#2563EB;')) }}">
+                          <option value="ChoThanhToan" {{ 'selected' if dl[5] == 'ChoThanhToan' else '' }}>Chờ thanh toán</option>
+                          <option value="DaThanhToan" {{ 'selected' if dl[5] == 'DaThanhToan' else '' }}>Đã thanh toán</option>
+                          <option value="ChoXacNhan" {{ 'selected' if dl[5] == 'ChoXacNhan' else '' }}>Chờ xác nhận</option>
+                          <option value="DaXacNhan" {{ 'selected' if dl[5] == 'DaXacNhan' else '' }}>Đã duyệt giữ chỗ</option>
+                          <option value="HoanThanh" {{ 'selected' if dl[5] == 'HoanThanh' else '' }}>Hoàn thành</option>
+                          <option value="Huy" {{ 'selected' if dl[5] == 'Huy' else '' }}>Đã hủy</option>
+                        </select>
+                      </form>
+                    </td>
+                    <td style="padding:12px 16px;text-align:right;white-space:nowrap;">
+                      <div style="display:inline-flex;gap:4px;">
+                        <!-- Nút Nhận Diện & Check-in QR -->
+                        <a href="/checkin?code={{ dl[0] }}" class="btn btn-primary btn-sm" style="padding:3px 8px;font-size:11px;" title="Nhận diện & Check-in mã đơn #{{ dl[0] }}">
+                          Quét QR
+                        </a>
+
+                        <!-- Nút Xem & In Hóa Đơn -->
+                        <a href="/hoa-don/{{ dl[0] }}" class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:11px;" title="Xem & In Hóa Đơn Thanh Toán">
+                          In HĐ
+                        </a>
+
+                        <!-- Nút Xóa Lịch Đặt -->
+                        <form method="POST" action="/admin/datlich/xoa/{{ dl[0] }}" style="display:inline;"
+                              onsubmit="return confirm('Bạn có chắc muốn xóa vĩnh viễn đơn đặt #{{ dl[0] }}?');">
+                          <button type="submit" class="btn btn-danger btn-sm" style="padding:3px 8px;font-size:11px;" title="Xóa đơn">
+                            Xóa
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="8" style="padding:36px;text-align:center;color:var(--text-muted);">
+                      Chưa có đơn đặt lịch nào trong cơ sở dữ liệu.<br/>
+                      <small>Khách hàng có thể đặt bàn trực tuyến tại <a href="/coso/8/dat-lich" style="color:var(--primary);font-weight:600;">Cơ sở Bóng Bàn</a> hoặc <a href="/dat-lich" style="color:var(--primary);font-weight:600;">Đặt Lịch Toàn Chuỗi</a>.</small>
+                    </td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════════════════════
+           TAB 3: QUẢN LÝ TÀI KHOẢN
+      ════════════════════════════════════════════════════════════════════ -->
+      <div id="tab-taikhoan" class="admin-tab-pane {{ 'active' if current_tab == 'taikhoan' else '' }}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+          <div>
+            <h2 style="font-size:20px;font-weight:800;margin:0 0 4px 0;display:flex;align-items:center;gap:8px;">
+              {% if is_admin %}
+                Quản Lý Tài Khoản Toàn Chuỗi (TaiKhoan)
+              {% else %}
+                Danh Sách Hội Viên Đăng Ký Tại Cơ Sở {{ "%02d"|format(quan_ly_cs_id) }}
+              {% endif %}
+            </h2>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;">
+              {% if is_admin %}
+                Thêm, sửa thông tin, phân quyền Quản lý cơ sở hoặc xóa tài khoản toàn hệ thống.
+              {% else %}
+                Chỉ hiển thị và quản lý các hội viên đã đăng ký hoặc đặt sân tại cơ sở của bạn.
+              {% endif %}
+            </p>
+          </div>
+
+          <button class="btn btn-primary btn-sm" onclick="moModal('modalThemTaiKhoan')">
+            {{ 'Thêm Tài Khoản Mới' if is_admin else 'Thêm Hội Viên Mới' }}
+          </button>
+        </div>
+
+        <div class="card" style="border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-xs);">
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;text-align:left;">
+              <thead>
+                <tr style="background:var(--bg-subtle);border-bottom:1px solid var(--border);color:var(--text-muted);font-size:12px;text-transform:uppercase;white-space:nowrap;">
+                  <th style="padding:12px 16px;white-space:nowrap;">ID</th>
+                  <th style="padding:12px 16px;white-space:nowrap;">Tên Đăng Nhập</th>
+                  <th style="padding:12px 16px;min-width:160px;">Họ Và Tên</th>
+                  <th style="padding:12px 16px;">Email</th>
+                  <th style="padding:12px 16px;white-space:nowrap;">Vai Trò</th>
+                  <th style="padding:12px 16px;white-space:nowrap;">{{ 'Cơ Sở Phụ Trách / Đăng Ký' if is_admin else 'Trực Thuộc' }}</th>
+                  <th style="padding:12px 16px;text-align:right;white-space:nowrap;">Hành Động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for tk in tk_list %}
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:12px 16px;font-weight:600;white-space:nowrap;">#{{ tk[0] }}</td>
+                  <td style="padding:12px 16px;white-space:nowrap;">
+                    <strong style="color:var(--text-main);">{{ tk[1] }}</strong>
+                  </td>
+                  <td style="padding:12px 16px;min-width:160px;">{{ tk[2] }}</td>
+                  <td style="padding:12px 16px;color:var(--text-muted);">{{ tk[3] or 'Chưa cập nhật' }}</td>
+                  <td style="padding:12px 16px;white-space:nowrap;">
+                    {% if tk[4] == 'Admin' %}
+                      <span class="badge" style="background:#FEF3C7;color:#D97706;font-weight:700;white-space:nowrap;">Quản Trị Viên</span>
+                    {% elif tk[4] == 'QuanLy' %}
+                      <span class="badge" style="background:#EFF6FF;color:#2563EB;font-weight:700;white-space:nowrap;">Quản Lý Cơ Sở</span>
+                    {% elif tk[4] == 'HLV' %}
+                      <span class="badge badge-info" style="white-space:nowrap;">Huấn Luyện Viên</span>
+                    {% else %}
+                      <span class="badge badge-success" style="white-space:nowrap;">Hội Viên</span>
+                    {% endif %}
+                  </td>
+                  <td style="padding:12px 16px;white-space:nowrap;">
+                    {% if tk[5] %}
+                      <span style="font-weight:600;color:var(--primary);white-space:nowrap;">
+                        CS {{ "%02d"|format(tk[5]) }}: {{ tk[6] }}
+                      </span>
+                    {% else %}
+                      <span style="color:var(--text-muted);white-space:nowrap;">Toàn chuỗi / Không gán</span>
+                    {% endif %}
+                  </td>
+                  <td style="padding:12px 16px;text-align:right;white-space:nowrap;">
+                    {% if is_admin or tk[4] == 'HoiVien' %}
+                      <div style="display:inline-flex;gap:4px;white-space:nowrap;">
+                        <button type="button" class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:11px;"
+                                onclick="moModalSuaTaiKhoan({{ tk[0] }}, '{{ tk[1] }}', '{{ tk[2] }}', '{{ tk[3] or '' }}', '{{ tk[4] }}', '{{ tk[5] or '' }}')">
+                          Sửa
+                        </button>
+                        {% if tk[1] != 'admin' and tk[0] != current_user.TaiKhoanId %}
+                          <form method="POST" action="/admin/taikhoan/xoa/{{ tk[0] }}" style="display:inline;"
+                                onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản {{ tk[1] }}?');">
+                            <button type="submit" class="btn btn-danger btn-sm" style="padding:3px 8px;font-size:11px;">
+                              Xóa
+                            </button>
+                          </form>
+                        {% endif %}
+                      </div>
+                    {% else %}
+                      <span style="font-size:11px;color:var(--text-muted);">Chỉ xem</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════════════════════
+           TAB 4: QUẢN LÝ CƠ SỞ
+      ════════════════════════════════════════════════════════════════════ -->
+      <div id="tab-coso" class="admin-tab-pane {{ 'active' if current_tab == 'coso' else '' }}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+          <div>
+            <h2 style="font-size:20px;font-weight:800;margin:0 0 4px 0;display:flex;align-items:center;gap:8px;">
+              {% if is_admin %}
+                Mạng Lưới 10 Cơ Sở Thể Thao (CoSo)
+              {% else %}
+                Thông Tin Cơ Sở {{ "%02d"|format(quan_ly_cs_id) }} Phụ Trách
+              {% endif %}
+            </h2>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;">
+              {% if is_admin %}
+                Toàn quyền thêm chi nhánh mới, điều chỉnh khung giờ hoạt động hoặc sửa thông tin 10 cơ sở.
+              {% else %}
+                Bạn có quyền chỉnh sửa thông tin liên hệ, giờ mở/đóng cửa của cơ sở mình phụ trách.
+              {% endif %}
+            </p>
+          </div>
+
+          {% if is_admin %}
+            <button class="btn btn-primary btn-sm" onclick="moModal('modalThemCoSo')">
+              Thêm Cơ Sở Mới
+            </button>
+          {% endif %}
+        </div>
+
+        <div class="card" style="border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-xs);">
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;text-align:left;">
+              <thead>
+                <tr style="background:var(--bg-subtle);border-bottom:1px solid var(--border);color:var(--text-muted);font-size:12px;text-transform:uppercase;white-space:nowrap;">
+                  <th style="padding:12px 16px;white-space:nowrap;">Mã CS</th>
+                  <th style="padding:12px 16px;min-width:180px;">Tên Cơ Sở & Môn</th>
+                  <th style="padding:12px 16px;">Địa Chỉ</th>
+                  <th style="padding:12px 16px;white-space:nowrap;">Giờ Hoạt Động</th>
+                  <th style="padding:12px 16px;white-space:nowrap;">Kiểu Đặt Lịch</th>
+                  <th style="padding:12px 16px;text-align:right;white-space:nowrap;">Hành Động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for cs in coso_list %}
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:12px 16px;font-weight:700;color:var(--primary);white-space:nowrap;">
+                    #{{ "%02d"|format(cs[0]) }}
+                  </td>
+                  <td style="padding:12px 16px;min-width:180px;">
+                    <strong style="color:var(--text-main);font-size:14px;">{{ cs[1] }}</strong>
+                    <div style="font-size:12px;color:var(--text-muted);white-space:nowrap;">Môn: {{ cs[2] }}</div>
+                  </td>
+                  <td style="padding:12px 16px;color:var(--text-muted);max-width:260px;">
+                    {{ cs[3] }}
+                  </td>
+                  <td style="padding:12px 16px;font-size:12px;white-space:nowrap;">
+                    <span style="font-weight:600;color:var(--success);">{{ cs[4] }}</span> – 
+                    <span style="font-weight:600;color:var(--danger);">{{ cs[5] }}</span>
+                  </td>
+                  <td style="padding:12px 16px;white-space:nowrap;">
+                    <span class="badge badge-info" style="font-size:11.5px;white-space:nowrap;">
+                      {{ 'Sân/Bàn theo giờ' if cs[6] == 'SAN' else ('Theo lượt chơi' if cs[6] == 'LUOT' else ('Theo ca tập' if cs[6] == 'CA' else 'Gói tháng')) }}
+                    </span>
+                  </td>
+                  <td style="padding:12px 16px;text-align:right;white-space:nowrap;">
+                    <div style="display:inline-flex;gap:4px;white-space:nowrap;">
+                      {% if cs[0] == 8 %}
+                        <a href="/coso/8" class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:11px;" title="Vào sân bóng bàn">
+                          Sân 08
+                        </a>
+                      {% endif %}
+                      <button type="button" class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:11px;"
+                              onclick="moModalSuaCoSo({{ cs[0] }}, '{{ cs[1] }}', '{{ cs[2] }}', '{{ cs[3] }}', '{{ cs[4] }}', '{{ cs[5] }}', '{{ cs[6] }}')">
+                        Sửa
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════════════════════
+           TAB 5: QUẢN LÝ KHUYẾN MÃI & VOUCHER
+      ════════════════════════════════════════════════════════════════════ -->
+      <div id="tab-khuyenmai" class="admin-tab-pane {{ 'active' if current_tab == 'khuyenmai' else '' }}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+          <div>
+            <h2 style="font-size:20px;font-weight:800;margin:0 0 4px 0;display:flex;align-items:center;gap:8px;">
+              Quản Lý Khuyến Mãi & Voucher (KhuyenMai)
+            </h2>
+            <p style="font-size:13px;color:var(--text-muted);margin:0;">
+              {% if is_admin %}
+                Thiết lập các chương trình giảm giá, mã voucher toàn chuỗi hoặc theo từng cơ sở cụ thể.
+              {% else %}
+                Quản lý các chương trình ưu đãi áp dụng cho cơ sở của bạn hoặc toàn chuỗi.
+              {% endif %}
+            </p>
+          </div>
+
+          <div style="display:flex;gap:8px;">
+            <a href="/khuyen-mai" target="_blank" class="btn btn-secondary btn-sm" title="Xem trang khuyến mãi công khai">
+              Xem Trang Khách
+            </a>
+            <button class="btn btn-primary btn-sm" onclick="moModal('modalThemKhuyenMai')">
+              Thêm Khuyến Mãi Mới
+            </button>
+          </div>
+        </div>
+
+        <div class="card" style="border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-xs);">
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;text-align:left;">
+              <thead>
+                <tr style="background:var(--bg-subtle);border-bottom:1px solid var(--border);color:var(--text-muted);font-size:12px;text-transform:uppercase;white-space:nowrap;">
+                  <th style="padding:12px 16px;white-space:nowrap;">Mã Code</th>
+                  <th style="padding:12px 16px;min-width:240px;">Chương Trình & Phân Loại</th>
+                  <th style="padding:12px 16px;text-align:center;white-space:nowrap;">Mức Giảm</th>
+                  <th style="padding:12px 16px;white-space:nowrap;">Phạm Vi Áp Dụng</th>
+                  <th style="padding:12px 16px;white-space:nowrap;">Hạn Dùng (HSD)</th>
+                  <th style="padding:12px 16px;text-align:center;white-space:nowrap;">Trạng Thái</th>
+                  <th style="padding:12px 16px;text-align:right;white-space:nowrap;">Hành Động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if khuyenmai_list %}
+                  {% for km in khuyenmai_list %}
+                  <tr style="border-bottom:1px solid var(--border);">
+                    <td style="padding:12px 16px;white-space:nowrap;">
+                      <span style="font-family:monospace;font-weight:900;font-size:14px;color:var(--primary);background:var(--bg-subtle);padding:3px 8px;border-radius:4px;border:1px dashed var(--border);white-space:nowrap;">
+                        {{ km[1] }}
+                      </span>
+                    </td>
+                    <td style="padding:12px 16px;min-width:240px;">
+                      <div style="font-weight:700;color:var(--text-main);font-size:14px;margin-bottom:2px;">
+                        {{ km[2] }}
+                      </div>
+                      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                        <span class="badge" style="background:#EDE9FE;color:#6D28D9;font-size:10px;font-weight:700;white-space:nowrap;">
+                          {{ km[6] or 'Ưu Đãi' }}
+                        </span>
+                        {% if km[3] %}
+                          <span style="font-size:12px;color:var(--text-muted);max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ km[3] }}">
+                            {{ km[3] }}
+                          </span>
+                        {% endif %}
+                      </div>
+                    </td>
+                    <td style="padding:12px 16px;text-align:center;white-space:nowrap;">
+                      <div style="font-size:15px;font-weight:800;color:#DC2626;white-space:nowrap;">
+                        -{{ km[4] }}%
+                      </div>
+                      {% if km[5] and km[5] > 0 %}
+                        <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;">
+                          Tối đa {{ "{:,.0f}".format(km[5]) }}đ
+                        </div>
+                      {% endif %}
+                    </td>
+                    <td style="padding:12px 16px;white-space:nowrap;">
+                      {% if km[7] %}
+                        <span class="badge badge-info" style="font-size:11.5px;white-space:nowrap;">
+                          CS {{ "%02d"|format(km[7]) }}: {{ km[8] }}
+                        </span>
+                      {% else %}
+                        <span class="badge badge-success" style="font-size:11.5px;white-space:nowrap;">
+                          Toàn Chuỗi (10 CS)
+                        </span>
+                      {% endif %}
+                    </td>
+                    <td style="padding:12px 16px;font-size:13px;color:var(--text-muted);white-space:nowrap;">
+                      {{ km[9] if km[9] else 'Không giới hạn' }}
+                    </td>
+                    <td style="padding:12px 16px;text-align:center;white-space:nowrap;">
+                      {% if km[10] == 'HoatDong' %}
+                        <span class="badge badge-success" style="font-size:11.5px;white-space:nowrap;">
+                          ● Đang chạy
+                        </span>
+                      {% else %}
+                        <span class="badge" style="background:#F1F5F9;color:#64748B;font-size:11.5px;white-space:nowrap;">
+                          ○ Tạm dừng
+                        </span>
+                      {% endif %}
+                    </td>
+                    <td style="padding:12px 16px;text-align:right;white-space:nowrap;">
+                      <div style="display:flex;justify-content:flex-end;gap:6px;">
+                        <!-- Nút Bật / Tắt nhanh -->
+                        <form method="POST" action="/admin/khuyenmai/trangthai/{{ km[0] }}" style="display:inline;">
+                          <button type="submit" class="btn btn-secondary btn-sm" style="padding:3px 7px;font-size:11px;"
+                                  title="{{ 'Nhấn để tạm dừng' if km[10] == 'HoatDong' else 'Nhấn để kích hoạt' }}">
+                            {{ '⏸️' if km[10] == 'HoatDong' else '▶️' }}
+                          </button>
+                        </form>
+
+                        <!-- Nút Sửa -->
+                        <button type="button" class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:11px;"
+                                onclick="moModalSuaKhuyenMai({{ km[0] }}, '{{ km[1] }}', '{{ km[2] }}', '{{ km[3] or '' }}', {{ km[4] }}, {{ km[5] or 0 }}, '{{ km[6] or '' }}', '{{ km[7] or '' }}', '{{ km[9] or '' }}', '{{ km[10] }}')"
+                                title="Sửa chương trình">
+                          Sửa
+                        </button>
+
+                        <!-- Nút Xóa -->
+                        <form method="POST" action="/admin/khuyenmai/xoa/{{ km[0] }}" style="display:inline;"
+                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa mã khuyến mãi {{ km[1] }}?');">
+                          <button type="submit" class="btn btn-danger btn-sm" style="padding:3px 8px;font-size:11px;" title="Xóa mã">
+                            Xóa
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="7" style="padding:36px;text-align:center;color:var(--text-muted);">
+                      Chưa có chương trình khuyến mãi nào.<br/>
+                      <small>Nhấn "Thêm Khuyến Mãi Mới" để tạo ưu đãi thu hút khách hàng.</small>
+                    </td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL 1: THÊM TÀI KHOẢN MỚI
+══════════════════════════════════════════════════════════════════════════ -->
+<div id="modalThemTaiKhoan" class="admin-modal-overlay" onclick="dongModalKhiClickNgoai(event, 'modalThemTaiKhoan')">
+  <div class="admin-modal-card">
+    <div class="admin-modal-header">
+      <h3 style="margin:0;font-size:18px;font-weight:800;">
+        {{ 'Thêm Tài Khoản Mới' if is_admin else ('Thêm Hội Viên Mới Trực Thuộc Cơ Sở ' ~ ("%02d"|format(quan_ly_cs_id))) }}
+      </h3>
+      <button onclick="dongModal('modalThemTaiKhoan')" class="admin-modal-close">✕</button>
+    </div>
+    <form method="POST" action="/admin/taikhoan/them">
+      <div class="admin-modal-body">
+        {% if not is_admin %}
+          <div style="padding:10px 14px;background:rgba(59,130,246,0.08);border:1px solid #BFDBFE;border-radius:var(--radius-md);margin-bottom:14px;font-size:12px;color:var(--primary);font-weight:600;">
+            ℹ️ Bạn đang thêm tài khoản Hội viên trực thuộc Cơ sở {{ "%02d"|format(quan_ly_cs_id) }}. Tài khoản sẽ tự động liên kết với cơ sở của bạn.
+          </div>
+        {% endif %}
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Tên Đăng Nhập <span style="color:var(--danger)">*</span></label>
+            <input type="text" name="ten_dang_nhap" class="form-control" placeholder="vd: nguyenvana" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mật Khẩu Khởi Tạo <span style="color:var(--danger)">*</span></label>
+            <input type="password" name="mat_khau" class="form-control" placeholder="Tối thiểu 6 ký tự" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Họ Và Tên <span style="color:var(--danger)">*</span></label>
+          <input type="text" name="ho_ten" class="form-control" placeholder="vd: Nguyễn Văn A" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email Liên Hệ</label>
+          <input type="email" name="email" class="form-control" placeholder="vd: a.nguyen@example.com">
+        </div>
+
+        {% if is_admin %}
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Vai Trò Hệ Thống <span style="color:var(--danger)">*</span></label>
+              <select name="vai_tro" id="them_vai_tro" class="form-control" onchange="kiemTraVaiTro('them_vai_tro', 'them_co_so_wrap')">
+                <option value="HoiVien" selected>Hội Viên (Khách hàng)</option>
+                <option value="QuanLy">Quản Lý Cơ Sở</option>
+                <option value="HLV">Huấn Luyện Viên</option>
+                <option value="Admin">Quản Trị Viên (Admin)</option>
+              </select>
+            </div>
+            <div class="form-group" id="them_co_so_wrap" style="display:none;">
+              <label class="form-label">Cơ Sở Phụ Trách</label>
+              <select name="co_so_id" class="form-control">
+                <option value="">-- Chọn cơ sở thể thao --</option>
+                {% for cs in coso_list %}
+                  <option value="{{ cs[0] }}">CS {{ "%02d"|format(cs[0]) }} — {{ cs[1] }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="dongModal('modalThemTaiKhoan')">Hủy</button>
+        <button type="submit" class="btn btn-primary btn-sm">Tạo Tài Khoản</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL 2: SỬA TÀI KHOẢN
+══════════════════════════════════════════════════════════════════════════ -->
+<div id="modalSuaTaiKhoan" class="admin-modal-overlay" onclick="dongModalKhiClickNgoai(event, 'modalSuaTaiKhoan')">
+  <div class="admin-modal-card">
+    <div class="admin-modal-header">
+      <h3 style="margin:0;font-size:18px;font-weight:800;">
+        Chỉnh Sửa Thông Tin Tài Khoản
+      </h3>
+      <button onclick="dongModal('modalSuaTaiKhoan')" class="admin-modal-close">✕</button>
+    </div>
+    <form method="POST" id="formSuaTaiKhoan" action="">
+      <div class="admin-modal-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Tên Đăng Nhập</label>
+            <input type="text" name="ten_dang_nhap" id="sua_ten_dang_nhap" class="form-control" disabled style="background:#F1F5F9;color:#64748B;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Đổi Mật Khẩu (để trống nếu giữ nguyên)</label>
+            <input type="password" name="mat_khau" class="form-control" placeholder="Mật khẩu mới (tùy chọn)">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Họ Và Tên <span style="color:var(--danger)">*</span></label>
+          <input type="text" name="ho_ten" id="sua_ho_ten" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email Liên Hệ</label>
+          <input type="email" name="email" id="sua_email" class="form-control">
+        </div>
+
+        {% if is_admin %}
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Vai Trò Hệ Thống</label>
+              <select name="vai_tro" id="sua_vai_tro" class="form-control" onchange="kiemTraVaiTro('sua_vai_tro', 'sua_co_so_wrap')">
+                <option value="HoiVien">Hội Viên (Khách hàng)</option>
+                <option value="QuanLy">Quản Lý Cơ Sở</option>
+                <option value="HLV">Huấn Luyện Viên</option>
+                <option value="Admin">Quản Trị Viên (Admin)</option>
+              </select>
+            </div>
+            <div class="form-group" id="sua_co_so_wrap">
+              <label class="form-label">Cơ Sở Phụ Trách</label>
+              <select name="co_so_id" id="sua_co_so_id" class="form-control">
+                <option value="">-- Không gán cơ sở --</option>
+                {% for cs in coso_list %}
+                  <option value="{{ cs[0] }}">CS {{ "%02d"|format(cs[0]) }} — {{ cs[1] }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="dongModal('modalSuaTaiKhoan')">Hủy</button>
+        <button type="submit" class="btn btn-primary btn-sm">Lưu Thay Đổi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL 3: THÊM CƠ SỞ MỚI (CHỈ ADMIN)
+══════════════════════════════════════════════════════════════════════════ -->
+{% if is_admin %}
+<div id="modalThemCoSo" class="admin-modal-overlay" onclick="dongModalKhiClickNgoai(event, 'modalThemCoSo')">
+  <div class="admin-modal-card">
+    <div class="admin-modal-header">
+      <h3 style="margin:0;font-size:18px;font-weight:800;">
+        Thêm Cơ Sở Thể Thao Mới
+      </h3>
+      <button onclick="dongModal('modalThemCoSo')" class="admin-modal-close">✕</button>
+    </div>
+    <form method="POST" action="/admin/coso/them">
+      <div class="admin-modal-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Mã Cơ Sở (Số nguyên) <span style="color:var(--danger)">*</span></label>
+            <input type="number" name="co_so_id" class="form-control" placeholder="vd: 11" min="1" max="99" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Môn Thể Thao <span style="color:var(--danger)">*</span></label>
+            <input type="text" name="mon_the_thao" class="form-control" placeholder="vd: Pickleball, Bắn Cung" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tên Cơ Sở Chi Nhánh <span style="color:var(--danger)">*</span></label>
+          <input type="text" name="ten_co_so" class="form-control" placeholder="vd: Cơ Sở 11 — Pickleball Trẻ" required>
+        </div>
+
+        <div class="grid-3">
+          <div class="form-group">
+            <label class="form-label">Giờ Mở Cửa</label>
+            <input type="text" name="gio_mo_cua" class="form-control" value="06:00" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Giờ Đóng Cửa</label>
+            <input type="text" name="gio_dong_cua" class="form-control" value="22:00" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kiểu Đặt Lịch</label>
+            <select name="kieu_dat_lich" class="form-control">
+              <option value="SAN">SAN (Theo giờ)</option>
+              <option value="LUOT">LUOT (Theo lượt)</option>
+              <option value="CA">CA (Theo ca)</option>
+              <option value="THANG">THANG (Theo tháng)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Địa Chỉ Chi Nhánh <span style="color:var(--danger)">*</span></label>
+          <input type="text" name="dia_chi" class="form-control" placeholder="vd: 123 Lê Lợi, Quận 1, TP.HCM" required>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="dongModal('modalThemCoSo')">Hủy</button>
+        <button type="submit" class="btn btn-primary btn-sm">Thêm Cơ Sở</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL 4: SỬA CƠ SỞ
+══════════════════════════════════════════════════════════════════════════ -->
+<div id="modalSuaCoSo" class="admin-modal-overlay" onclick="dongModalKhiClickNgoai(event, 'modalSuaCoSo')">
+  <div class="admin-modal-card">
+    <div class="admin-modal-header">
+      <h3 style="margin:0;font-size:18px;font-weight:800;">
+        Chỉnh Sửa Thông Tin Cơ Sở
+      </h3>
+      <button onclick="dongModal('modalSuaCoSo')" class="admin-modal-close">✕</button>
+    </div>
+    <form method="POST" id="formSuaCoSo" action="">
+      <div class="admin-modal-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Mã Cơ Sở</label>
+            <input type="text" id="sua_coso_id_display" class="form-control" disabled style="background:#F1F5F9;color:#64748B;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Môn Thể Thao</label>
+            <input type="text" name="mon_the_thao" id="sua_mon_the_thao" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tên Cơ Sở</label>
+          <input type="text" name="ten_co_so" id="sua_ten_co_so" class="form-control" required>
+        </div>
+
+        <div class="grid-3">
+          <div class="form-group">
+            <label class="form-label">Giờ Mở Cửa</label>
+            <input type="text" name="gio_mo_cua" id="sua_gio_mo_cua" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Giờ Đóng Cửa</label>
+            <input type="text" name="gio_dong_cua" id="sua_gio_dong_cua" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kiểu Đặt Lịch</label>
+            <select name="kieu_dat_lich" id="sua_kieu_dat_lich" class="form-control">
+              <option value="SAN">SAN (Theo giờ)</option>
+              <option value="LUOT">LUOT (Theo lượt)</option>
+              <option value="CA">CA (Theo ca)</option>
+              <option value="THANG">THANG (Theo tháng)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Địa Chỉ Chi Nhánh</label>
+          <input type="text" name="dia_chi" id="sua_dia_chi" class="form-control" required>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="dongModal('modalSuaCoSo')">Hủy</button>
+        <button type="submit" class="btn btn-primary btn-sm">Lưu Thay Đổi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL 5: THÊM KHUYẾN MÃI MỚI
+══════════════════════════════════════════════════════════════════════════ -->
+<div id="modalThemKhuyenMai" class="admin-modal-overlay" onclick="dongModalKhiClickNgoai(event, 'modalThemKhuyenMai')">
+  <div class="admin-modal-card">
+    <div class="admin-modal-header">
+      <h3 style="margin:0;font-size:18px;font-weight:800;">
+        Thêm Chương Trình Khuyến Mãi Mới
+      </h3>
+      <button onclick="dongModal('modalThemKhuyenMai')" class="admin-modal-close">✕</button>
+    </div>
+    <form method="POST" action="/admin/khuyenmai/them">
+      <div class="admin-modal-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Mã Khuyến Mãi (Code) <span style="color:var(--danger)">*</span></label>
+            <input type="text" name="ma_code" class="form-control" placeholder="VD: TET2026, HEVANG" style="font-family:monospace;font-weight:700;text-transform:uppercase;" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phân Loại (Badge)</label>
+            <input type="text" name="badge" class="form-control" placeholder="VD: Hội Viên Mới, Giờ Vàng" value="Ưu Đãi">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tiêu Đề Chương Trình <span style="color:var(--danger)">*</span></label>
+          <input type="text" name="tieu_de" class="form-control" placeholder="VD: Giảm 20% Đặt Bàn Khung Giờ Sáng" required>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Giảm Giá (%) <span style="color:var(--danger)">*</span></label>
+            <input type="number" name="giam_phan_tram" class="form-control" min="1" max="100" value="10" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Giảm Tối Đa (VNĐ, 0 = ko giới hạn)</label>
+            <input type="number" name="giam_toi_da" class="form-control" min="0" step="10000" value="0">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Phạm Vi Áp Dụng</label>
+            {% if is_admin %}
+              <select name="co_so_id" class="form-control">
+                <option value="">Toàn Bộ 10 Cơ Sở (Toàn Chuỗi)</option>
+                {% for cs in coso_list %}
+                  <option value="{{ cs[0] }}">CS {{ "%02d"|format(cs[0]) }} — {{ cs[1] }}</option>
+                {% endfor %}
+              </select>
+            {% else %}
+              <input type="text" class="form-control" value="CS {{ '%02d'|format(quan_ly_cs_id) }} — {{ current_coso_info[1] if current_coso_info else '' }}" disabled>
+              <input type="hidden" name="co_so_id" value="{{ quan_ly_cs_id }}">
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hạn Sử Dụng (HSD)</label>
+            <input type="date" name="ngay_ket_thuc" class="form-control" value="2026-12-31">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mô Tả & Điều Kiện Áp Dụng</label>
+          <textarea name="mo_ta" class="form-control" rows="3" placeholder="Chi tiết điều kiện: áp dụng cho hội viên mới, khung giờ nào..."></textarea>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="dongModal('modalThemKhuyenMai')">Hủy</button>
+        <button type="submit" class="btn btn-primary btn-sm">Thêm Khuyến Mãi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL 6: SỬA CHƯƠNG TRÌNH KHUYẾN MÃI
+══════════════════════════════════════════════════════════════════════════ -->
+<div id="modalSuaKhuyenMai" class="admin-modal-overlay" onclick="dongModalKhiClickNgoai(event, 'modalSuaKhuyenMai')">
+  <div class="admin-modal-card">
+    <div class="admin-modal-header">
+      <h3 style="margin:0;font-size:18px;font-weight:800;">
+        Chỉnh Sửa Chương Trình Khuyến Mãi
+      </h3>
+      <button onclick="dongModal('modalSuaKhuyenMai')" class="admin-modal-close">✕</button>
+    </div>
+    <form method="POST" id="formSuaKhuyenMai" action="">
+      <div class="admin-modal-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Mã Code <span style="color:var(--danger)">*</span></label>
+            <input type="text" name="ma_code" id="sua_km_code" class="form-control" style="font-family:monospace;font-weight:700;text-transform:uppercase;" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phân Loại (Badge)</label>
+            <input type="text" name="badge" id="sua_km_badge" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tiêu Đề Chương Trình <span style="color:var(--danger)">*</span></label>
+          <input type="text" name="tieu_de" id="sua_km_tieu_de" class="form-control" required>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Giảm Giá (%) <span style="color:var(--danger)">*</span></label>
+            <input type="number" name="giam_phan_tram" id="sua_km_giam_pt" class="form-control" min="1" max="100" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Giảm Tối Đa (VNĐ, 0 = ko giới hạn)</label>
+            <input type="number" name="giam_toi_da" id="sua_km_giam_max" class="form-control" min="0" step="10000">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Phạm Vi Áp Dụng</label>
+            {% if is_admin %}
+              <select name="co_so_id" id="sua_km_coso_id" class="form-control">
+                <option value="">Toàn Bộ 10 Cơ Sở (Toàn Chuỗi)</option>
+                {% for cs in coso_list %}
+                  <option value="{{ cs[0] }}">CS {{ "%02d"|format(cs[0]) }} — {{ cs[1] }}</option>
+                {% endfor %}
+              </select>
+            {% else %}
+              <input type="text" class="form-control" value="CS {{ '%02d'|format(quan_ly_cs_id) }} — {{ current_coso_info[1] if current_coso_info else '' }}" disabled>
+              <input type="hidden" name="co_so_id" value="{{ quan_ly_cs_id }}">
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hạn Sử Dụng (HSD)</label>
+            <input type="date" name="ngay_ket_thuc" id="sua_km_ngay_kt" class="form-control">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Trạng Thái</label>
+            <select name="trang_thai" id="sua_km_trang_thai" class="form-control">
+              <option value="HoatDong">● Đang Áp Dụng (Hoạt động)</option>
+              <option value="TamDung">○ Tạm Dừng Áp Dụng</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mô Tả & Điều Kiện Áp Dụng</label>
+          <textarea name="mo_ta" id="sua_km_mo_ta" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="dongModal('modalSuaKhuyenMai')">Hủy</button>
+        <button type="submit" class="btn btn-primary btn-sm">Lưu Thay Đổi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     STYLES: BỐ CỤC SIDEBAR & TAB CONTENT
+══════════════════════════════════════════════════════════════════════════ -->
+<style>
+/* Bố cục Admin */
+.admin-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  min-height: 720px;
+}
+
+/* Sidebar trái */
+.admin-sidebar {
+  width: 270px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 85px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 16px 14px;
+  box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  overscroll-behavior: contain; /* Ngăn scroll chaining kéo giật trang cha */
+  -webkit-overflow-scrolling: touch;
+  transition: width 0.22s cubic-bezier(0, 0, 0.2, 1), padding 0.2s ease;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+/* Tiêu đề Menu với Nút 3 Gạch */
+.admin-sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 2px 4px 14px 4px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-hamburger-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.admin-hamburger-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.admin-sidebar-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Trạng thái thu gọn Menu (Collapsed Sidebar) */
+.admin-sidebar.collapsed {
+  width: 76px;
+  padding: 16px 8px;
+}
+
+.admin-sidebar.collapsed .admin-sidebar-title,
+.admin-sidebar.collapsed .nav-label,
+.admin-sidebar.collapsed .nav-badge,
+.admin-sidebar.collapsed .sidebar-section-title,
+.admin-sidebar.collapsed .admin-quick-actions {
+  display: none !important;
+}
+
+.admin-sidebar.collapsed .admin-sidebar-header {
+  justify-content: center;
+  padding: 2px 0 14px 0;
+}
+
+.admin-sidebar.collapsed .admin-nav-item {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.admin-sidebar.collapsed .nav-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.admin-nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 14px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.admin-nav-item:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+}
+
+.admin-nav-item.active {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.admin-nav-item .nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.admin-nav-item .nav-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}
+
+.admin-nav-item .nav-label {
+  flex: 1;
+}
+
+.admin-nav-item .nav-badge {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.admin-nav-item.active .nav-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* Nội dung chính bên phải */
+.admin-main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-tab-pane {
+  display: none;
+}
+
+.admin-tab-pane.active {
+  display: block;
+  animation: adminTabFade 0.15s ease-out;
+}
+
+@keyframes adminTabFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Responsive Mobile / Tablet */
+@media (max-width: 980px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 100%;
+    position: static;
+  }
+  .admin-nav-menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .admin-nav-item {
+    width: auto;
+    flex: 1;
+    min-width: 160px;
+  }
+}
+
+/* Modal (Tối ưu hóa GPU 60fps không giật khựng) */
+.admin-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15, 23, 42, 0.65);
+  contain: strict;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.admin-modal-card {
+  background: var(--bg-card);
+  width: 100%;
+  max-width: 520px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  animation: modalPopIn 0.22s cubic-bezier(0, 0, 0.2, 1);
+}
+@keyframes modalPopIn {
+  from { opacity: 0; transform: scale(0.96) translate3d(0, 0, 0); }
+  to   { opacity: 1; transform: scale(1) translate3d(0, 0, 0); }
+}
+.admin-modal-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.admin-modal-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+.admin-modal-close:hover { color: var(--danger); }
+.admin-modal-body {
+  padding: 20px 24px;
+  max-height: 75vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.admin-modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-subtle);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+</style>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     JAVASCRIPT: CHUYỂN TAB & MODALS
+══════════════════════════════════════════════════════════════════════════ -->
+<script>
+// Bật / tắt thu gọn thanh menu bên trái (biểu tượng 3 gạch)
+function toggleSidebarMenu() {
+  var sidebar = document.querySelector('.admin-sidebar');
+  if (sidebar) {
+    sidebar.classList.toggle('collapsed');
+    try {
+      localStorage.setItem('admin_sidebar_collapsed', sidebar.classList.contains('collapsed') ? '1' : '0');
+    } catch(e) {}
+  }
+}
+
+// Khôi phục trạng thái thu gọn nếu người dùng đã chọn trước đó
+try {
+  if (localStorage.getItem('admin_sidebar_collapsed') === '1') {
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelector('.admin-sidebar')?.classList.add('collapsed');
+    });
+  }
+} catch(e) {}
+
+// Hàm chuyển tab
+function chuyenTab(tabName, cuonTrang) {
+  if (!tabName) tabName = 'tongquan';
+  tabName = tabName.replace('#', '').replace('tab-', '');
+  
+  var validTabs = ['tongquan', 'datlich', 'taikhoan', 'coso', 'khuyenmai'];
+  if (!validTabs.includes(tabName)) {
+    tabName = 'tongquan';
+  }
+
+  // 1. Cập nhật Sidebar menu
+  var navItems = document.querySelectorAll('.admin-nav-item');
+  navItems.forEach(function(item) {
+    if (item.getAttribute('data-tab') === tabName) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+
+  // 2. Cập nhật Tab Pane
+  var tabPanes = document.querySelectorAll('.admin-tab-pane');
+  tabPanes.forEach(function(pane) {
+    if (pane.id === 'tab-' + tabName) {
+      pane.classList.add('active');
+    } else {
+      pane.classList.remove('active');
+    }
+  });
+
+  // 3. Cập nhật hash trên URL mà không gây kích hoạt hashchange thừa hoặc giật cuộn
+  if (window.location.hash !== '#' + tabName) {
+    if (history.replaceState) {
+      history.replaceState(null, null, '#' + tabName);
+    }
+  }
+
+  // 4. Chỉ cuộn lên đầu nếu người dùng chủ động click menu tab từ phía dưới
+  if (cuonTrang === true && window.scrollY > 250) {
+    window.scrollTo({ top: 0 });
+  }
+}
+
+// Khởi chạy kích hoạt tab đúng theo URL khi mở trang (không giật cuộn trang)
+document.addEventListener('DOMContentLoaded', function() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var targetTab = urlParams.get('tab') || window.location.hash.replace('#', '') || 'tongquan';
+  chuyenTab(targetTab, false);
+});
+
+// Bắt sự kiện người dùng nhấn nút Back / Forward trên trình duyệt
+window.addEventListener('hashchange', function() {
+  var targetTab = window.location.hash.replace('#', '');
+  if (targetTab) {
+    chuyenTab(targetTab, false);
+  }
+});
+
+function moModal(id) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.style.display = 'flex';
+  }
+}
+function dongModal(id) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.style.display = 'none';
+  }
+}
+function dongModalKhiClickNgoai(e, id) {
+  if (e.target && e.target.id === id) {
+    dongModal(id);
+  }
+}
+function kiemTraVaiTro(selectId, wrapId) {
+  var sel = document.getElementById(selectId);
+  var wrap = document.getElementById(wrapId);
+  if (sel && wrap) {
+    if (sel.value === 'QuanLy' || sel.value === 'HLV') {
+      wrap.style.display = 'block';
+    } else {
+      wrap.style.display = 'none';
+    }
+  }
+}
+
+// Mở modal sửa tài khoản và điền dữ liệu
+function moModalSuaTaiKhoan(id, tenDangNhap, hoTen, email, vaiTro, coSoId) {
+  document.getElementById('formSuaTaiKhoan').action = '/admin/taikhoan/sua/' + id;
+  document.getElementById('sua_ten_dang_nhap').value = tenDangNhap;
+  document.getElementById('sua_ho_ten').value = hoTen;
+  document.getElementById('sua_email').value = email;
+  document.getElementById('sua_vai_tro').value = vaiTro;
+  document.getElementById('sua_co_so_id').value = coSoId || '';
+  kiemTraVaiTro('sua_vai_tro', 'sua_co_so_wrap');
+  moModal('modalSuaTaiKhoan');
+}
+
+// Mở modal sửa cơ sở và điền dữ liệu
+function moModalSuaCoSo(id, ten, mon, diaChi, gioMo, gioDong, kieu) {
+  document.getElementById('formSuaCoSo').action = '/admin/coso/sua/' + id;
+  document.getElementById('sua_coso_id_display').value = '#' + id;
+  document.getElementById('sua_ten_co_so').value = ten;
+  document.getElementById('sua_mon_the_thao').value = mon;
+  document.getElementById('sua_dia_chi').value = diaChi;
+  document.getElementById('sua_gio_mo_cua').value = gioMo;
+  document.getElementById('sua_gio_dong_cua').value = gioDong;
+  document.getElementById('sua_kieu_dat_lich').value = kieu;
+  moModal('modalSuaCoSo');
+}
+
+// Mở modal sửa khuyến mãi và điền dữ liệu
+function moModalSuaKhuyenMai(id, code, tieuDe, moTa, giamPt, giamMax, badge, coSoId, ngayKt, trangThai) {
+  document.getElementById('formSuaKhuyenMai').action = '/admin/khuyenmai/sua/' + id;
+  document.getElementById('sua_km_code').value = code;
+  document.getElementById('sua_km_tieu_de').value = tieuDe;
+  document.getElementById('sua_km_mo_ta').value = moTa || '';
+  document.getElementById('sua_km_giam_pt').value = giamPt;
+  document.getElementById('sua_km_giam_max').value = giamMax || 0;
+  document.getElementById('sua_km_badge').value = badge || 'Ưu Đãi';
+  if (document.getElementById('sua_km_coso_id')) {
+    document.getElementById('sua_km_coso_id').value = coSoId || '';
+  }
+  document.getElementById('sua_km_ngay_kt').value = ngayKt || '';
+  document.getElementById('sua_km_trang_thai').value = trangThai || 'HoatDong';
+  moModal('modalSuaKhuyenMai');
+}
+
+// Xử lý tra cứu / nhận diện nhanh mã QR đơn đặt
+function xuLyNhanDienNhanh() {
+  var inp = document.getElementById('quickQrInput');
+  if (!inp) return;
+  var val = inp.value.trim();
+  if (!val) {
+    alert('Vui lòng nhập hoặc quét mã đơn / mã QR để nhận diện!');
+    inp.focus();
+    return;
+  }
+  window.location.href = '/checkin?code=' + encodeURIComponent(val);
+}
+</script>
+{% endblock %}
