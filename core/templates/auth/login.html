@@ -36,13 +36,59 @@
       </div>
 
       <!-- Demo Accounts Widget -->
-      <div style="margin-top:24px;padding:12px 16px;background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text-body);">
-        <strong style="color:var(--text-main);display:block;margin-bottom:4px;">🧪 Tài khoản demo hệ thống:</strong>
-        • Quản trị toàn chuỗi: <code style="color:var(--primary);font-weight:700;">admin</code> / <code style="color:var(--primary)">admin123</code><br>
-        • Quản lý Bóng Bàn: <code style="color:var(--primary);font-weight:700;">quanly_bongban</code> / <code style="color:var(--primary)">quanly123</code>
+      <div style="margin-top:24px;padding:14px 16px;background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-md);font-size:12.5px;color:var(--text-body);">
+        <strong style="color:var(--text-main);display:block;margin-bottom:10px;font-size:13px;">Tài khoản kiểm thử hệ thống:</strong>
+        
+        <!-- Quản lý Cơ Sở (Đặt lên đầu để Quản lý đăng nhập nhanh) -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--border);gap:8px;">
+          <div>
+            <div style="font-weight:700;color:var(--text-main);">Quản Lý Cơ Sở 08 (Bóng Bàn)</div>
+            <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">
+              Tên: <code style="color:var(--primary);font-weight:700;">quanly_bongban</code> • MK: <code style="color:var(--primary);">quanly123</code>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="dienTaiKhoan('quanly_bongban', 'quanly123')" style="padding:5px 12px;font-size:12px;min-height:32px;font-weight:700;">
+            Điền
+          </button>
+        </div>
+
+        <!-- Quản Trị Viên (Admin) -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--border);gap:8px;">
+          <div>
+            <div style="font-weight:700;color:var(--text-main);">Quản Trị Viên Hệ Thống (Admin)</div>
+            <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">
+              Tên: <code style="color:var(--primary);font-weight:700;">admin</code> • MK: <code style="color:var(--primary);">admin123</code>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="dienTaiKhoan('admin', 'admin123')" style="padding:5px 12px;font-size:12px;min-height:32px;font-weight:700;">
+            Điền
+          </button>
+        </div>
+
+        <!-- Quản lý Cơ Sở 01 - 10 khác -->
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div>
+            <div style="font-weight:700;color:var(--text-main);">Quản Lý Cơ Sở 01 - 10</div>
+            <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">
+              Tên: <code style="color:var(--primary);font-weight:700;">quanly01</code>...<code style="color:var(--primary);font-weight:700;">quanly10</code> • MK: <code style="color:var(--primary);">123456</code>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="dienTaiKhoan('quanly08', '123456')" style="padding:5px 12px;font-size:12px;min-height:32px;font-weight:700;" title="Điền Quản lý cơ sở 08">
+            Điền
+          </button>
+        </div>
       </div>
 
     </div>
   </div>
 </div>
+
+<script>
+function dienTaiKhoan(tdn, mk) {
+  var u = document.querySelector('input[name="ten_dang_nhap"]');
+  var p = document.querySelector('input[name="mat_khau"]');
+  if (u) u.value = tdn;
+  if (p) p.value = mk;
+}
+</script>
 {% endblock %}
