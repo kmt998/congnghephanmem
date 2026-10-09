@@ -111,16 +111,16 @@ Dữ liệu đã được nạp sẵn các tài khoản sau để bạn test ch�
 | Phân loại | Tên đăng nhập | Mật khẩu | Phạm vi quyền hạn | Ghi chú |
 | :--- | :--- | :--- | :--- | :--- |
 | **Admin** | `admin` | `admin123` | Quản trị tối cao toàn chuỗi 10 cơ sở | Xem/quản lý toàn bộ hệ thống |
-| **Quản lý CS 1** | `quanly01` | `123456` | Quản lý Cơ sở 1 (Gym & Fitness Cầu Giấy) | Chỉ quản lý CS 1 |
-| **Quản lý CS 2** | `quanly02` | `123456` | Quản lý Cơ sở 2 (Yoga & Pilates Đống Đa) | Chỉ quản lý CS 2 |
-| **Quản lý CS 3** | `quanly03` | `123456` | Quản lý Cơ sở 3 (Bể Bơi Bốn Mùa Thanh Xuân) | Chỉ quản lý CS 3 |
-| **Quản lý CS 4** | `quanly04` | `123456` | Quản lý Cơ sở 4 (Sân Bóng Đá Mini Hà Đông) | Chỉ quản lý CS 4 |
-| **Quản lý CS 5** | `quanly05` | `123456` | Quản lý Cơ sở 5 (Cầu Lông & Tennis Ba Đình) | Chỉ quản lý CS 5 |
-| **Quản lý CS 6** | `quanly06` | `123456` | Quản lý Cơ sở 6 (Bắn Cung Tây Hồ) | Chỉ quản lý CS 6 |
-| **Quản lý CS 7** | `quanly07` | `123456` | Quản lý Cơ sở 7 (Leo Núi Nhân Tạo Nam Từ Liêm) | Chỉ quản lý CS 7 |
-| **Quản lý CS 8** | `quanly08` | `123456` | Quản lý Cơ sở 8 (Bóng Bàn Hoàng Mai) | Chỉ quản lý CS 8 |
-| **Quản lý CS 9** | `quanly09` | `123456` | Quản lý Cơ sở 9 (Võ Thuật & Boxing Hai Bà Trưng) | Chỉ quản lý CS 9 |
-| **Quản lý CS 10** | `quanly10` | `123456` | Quản lý Cơ sở 10 (Pickleball Long Biên) | Chỉ quản lý CS 10 |
+| **Quản lý CS 1** | `quanly01` | `123456` | Quản lý Cơ sở 1  | Chỉ quản lý CS 1 |
+| **Quản lý CS 2** | `quanly02` | `123456` | Quản lý Cơ sở 2  | Chỉ quản lý CS 2 |
+| **Quản lý CS 3** | `quanly03` | `123456` | Quản lý Cơ sở 3  | Chỉ quản lý CS 3 |
+| **Quản lý CS 4** | `quanly04` | `123456` | Quản lý Cơ sở 4  | Chỉ quản lý CS 4 |
+| **Quản lý CS 5** | `quanly05` | `123456` | Quản lý Cơ sở 5  | Chỉ quản lý CS 5 |
+| **Quản lý CS 6** | `quanly06` | `123456` | Quản lý Cơ sở 6  | Chỉ quản lý CS 6 |
+| **Quản lý CS 7** | `quanly07` | `123456` | Quản lý Cơ sở 7  | Chỉ quản lý CS 7 |
+| **Quản lý CS 8** | `quanly08` | `123456` | Quản lý Cơ sở 8  | Chỉ quản lý CS 8 |
+| **Quản lý CS 9** | `quanly09` | `123456` | Quản lý Cơ sở 9  | Chỉ quản lý CS 9 |
+| **Quản lý CS 10** | `quanly10` | `123456` | Quản lý Cơ sở 10  | Chỉ quản lý CS 10 |
 | **Hội viên** | `hoivien01` | `123456` | Khách hàng thành viên | Đặt lịch, mua gói tập, xem hóa đơn |
 
 ---
